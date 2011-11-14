@@ -13,3 +13,6 @@ The system allows money transaction between three parties: Customer, Merchant
 and Bank.  Therefore we are planning on have 3 main classes for each type of transaction.
 
 See the Projects List documents for more information on each type of transaction.
+
+*Bruce Schneier - Applied Cryptography*
+http://www.schneier.com/book-applied.html
