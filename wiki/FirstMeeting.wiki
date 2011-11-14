@@ -1,0 +1,15 @@
+#summary One-sentence summary of this page.
+#labels FirstMeeting
+
+= Introduction =
+
+*First e-Cash Protocol Meeting with Group (Matthew and Jonathan)*
+
+= Details =
+
+We are going to use the Java Programming Language with Eclipse and our editor.
+
+The system allows money transaction between three parties: Customer, Merchant
+and Bank.  Therefore we are planning on have 3 main classes for each type of transaction.
+
+See the Projects List documents for more information on each type of transaction.
