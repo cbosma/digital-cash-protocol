@@ -104,12 +104,16 @@ public class Chooser extends JPanel implements ActionListener {
 //			System.exit(0);
 		}else if (e.getActionCommand().equals("merchant")) {
 			Merchant merch = new Merchant();
+			this.setVisible(false);
 			frame.setVisible(false);
-			System.exit(0);
+			merch.createAndShowGUI();
+//			System.exit(0);
 		}else if (e.getActionCommand().equals("bank")) {
 			Bank bank = new Bank();
+			this.setVisible(false);
 			frame.setVisible(false);
-			System.exit(0);
+			bank.createAndShowGUI();
+//			System.exit(0);
 		}
 	}
 }
