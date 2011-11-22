@@ -24,7 +24,7 @@ public class Customer extends JPanel implements ActionListener{
 	public Customer() {
 		super();
 	}
-	
+
 	/**
 	 * Create the frame to hold the panel.
 	 */
@@ -33,30 +33,32 @@ public class Customer extends JPanel implements ActionListener{
 		JFrame frame = new JFrame("Customer");
 		frame.setLayout(new GridLayout(2,1));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		frame.setMinimumSize(new Dimension(250, frame.getPreferredSize().height));
 		frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
 				.getWidth() - frame.getSize().width) / 2), 200);
-		
-	    JTextField amount = new JTextField("Amount:", 8);
-	    amount.setHorizontalAlignment(JTextField.CENTER);
-	    frame.add(amount);
-	    
+
+		JTextField amount = new JTextField("Amount:", 8);
+		amount.setHorizontalAlignment(JTextField.CENTER);
+		amount.setToolTipText("Enter the amount to transfer");
+		frame.add(amount);
+
 		JButton submit = new JButton("Submit");
 		submit.addActionListener(this);
 		submit.setActionCommand("submit");
 		submit.setToolTipText("Submit your purchase");
+		submit.addActionListener(this);
 		frame.add(submit);
-		
+
 		// Display the window
 		frame.pack();
 		frame.setVisible(true);
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+		if(e.getActionCommand().equals("submit")) {
+			System.exit(0);
+		}
 	}
-
 }
