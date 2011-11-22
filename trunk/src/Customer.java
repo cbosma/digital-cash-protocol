@@ -1,4 +1,47 @@
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class Customer {
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+
+public class Customer extends JPanel implements ActionListener{
+
+	/**
+	 * Randomly Generated Serial Version UID
+	 */
+	private static final long serialVersionUID = 8465685567853888181L;
+
+	/**
+	 * Constructor
+	 */
+	public Customer() {
+		super();
+	}
+	
+	/**
+	 * Create the frame to hold the panel.
+	 */
+	public void createAndShowGUI() {
+		// Create and set up the window
+		JFrame frame = new JFrame("Customer");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		frame.setMinimumSize(new Dimension(250, frame.getPreferredSize().height));
+		frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
+				.getWidth() - frame.getSize().width) / 2), 200);
+		
+		// Display the window
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
