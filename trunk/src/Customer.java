@@ -4,7 +4,11 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -62,19 +66,40 @@ public class Customer extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("submit")) {
+
+			ObjectOutputStream out = null;
+			ObjectInputStream in = null;
+			Socket requestSocket = null;
 			try{
 				//1. creating a socket to connect to the server
-				Socket requestSocket = new Socket("localhost", 2004);
+				requestSocket = new Socket("localhost", 2004);
 				System.out.println("Connected to localhost in port 2004");
+				//2. get Input and Output streams
+				out = new ObjectOutputStream(requestSocket.getOutputStream());
+				out.flush();
+				in = new ObjectInputStream(requestSocket.getInputStream());
+				out.writeObject("Test Message to Server");
+				out.flush();
+				System.out.println("Message sent from client");
 			}
 			catch(UnknownHostException unknownHost){
 				System.err.println("You are trying to connect to an unknown host!");
 			}
 			catch(IOException ioException){
 				ioException.printStackTrace();
-			}	
-
-			//System.exit(0);
+			}
+			finally{
+				//4: Closing connection
+				try{
+					in.close();
+					out.close();
+					requestSocket.close();
+					System.exit(0);
+				}
+				catch(IOException ioException){
+					ioException.printStackTrace();
+				}
+			}
 		}
 	}
 }
