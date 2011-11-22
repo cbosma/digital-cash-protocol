@@ -1,6 +1,9 @@
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,22 +17,44 @@ import javax.swing.UIManager;
  * - Merchant
  * - Bank
  */
-public class Chooser extends JPanel {
+public class Chooser extends JPanel implements ActionListener {
 
 	/**
 	 * Randomly Generated Serial Version UID
 	 */
 	private static final long serialVersionUID = -3623821215053750506L;
+	
+	private static JFrame frame;
 
 	/**
 	 * Create the panel.  Setting the layout and adding the buttons.
 	 */
 	public Chooser() {
 		super(new GridLayout(3, 1));
+		
+		JButton custButton = new JButton("Customer");
+		JButton merchButton = new JButton("Merchant");
+		JButton bankButton = new JButton("Bank");
 
-		add(new JButton("Customer"));
-		add(new JButton("Merchant"));
-		add(new JButton("Bank"));
+		custButton.addActionListener(this);
+		merchButton.addActionListener(this);
+		bankButton.addActionListener(this);
+		
+		custButton.setMnemonic(KeyEvent.VK_C);
+		merchButton.setMnemonic(KeyEvent.VK_M);
+		bankButton.setMnemonic(KeyEvent.VK_B);
+		
+		custButton.setActionCommand("customer");
+		merchButton.setActionCommand("merchant");
+		bankButton.setActionCommand("bank");
+		
+		custButton.setToolTipText("Choose the customer role");
+		merchButton.setToolTipText("Choose the merchant role");
+		bankButton.setToolTipText("Choose the bank role");
+		
+		add(custButton);
+		add(merchButton);
+		add(bankButton);
 	}
 
 	/**
@@ -37,7 +62,7 @@ public class Chooser extends JPanel {
 	 */
 	private static void createAndShowGUI() {
 		// Create and set up the window
-		JFrame frame = new JFrame("Choose Your Role");
+		frame = new JFrame("Choose Your Role");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.setMinimumSize(new Dimension(250, frame.getPreferredSize().height));
@@ -67,5 +92,24 @@ public class Chooser extends JPanel {
 				createAndShowGUI();
 			}
 		});
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getActionCommand().equals("customer")) {
+			Customer cust = new Customer();
+			this.setVisible(false);
+			frame.setVisible(false);
+			cust.createAndShowGUI();
+//			System.exit(0);
+		}else if (e.getActionCommand().equals("merchant")) {
+			Merchant merch = new Merchant();
+			frame.setVisible(false);
+			System.exit(0);
+		}else if (e.getActionCommand().equals("bank")) {
+			Bank bank = new Bank();
+			frame.setVisible(false);
+			System.exit(0);
+		}
 	}
 }
