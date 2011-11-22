@@ -4,6 +4,10 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -58,7 +62,19 @@ public class Customer extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("submit")) {
-			System.exit(0);
+			try{
+				//1. creating a socket to connect to the server
+				Socket requestSocket = new Socket("localhost", 2004);
+				System.out.println("Connected to localhost in port 2004");
+			}
+			catch(UnknownHostException unknownHost){
+				System.err.println("You are trying to connect to an unknown host!");
+			}
+			catch(IOException ioException){
+				ioException.printStackTrace();
+			}	
+
+			//System.exit(0);
 		}
 	}
 }
