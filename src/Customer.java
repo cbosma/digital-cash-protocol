@@ -14,7 +14,19 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-
+/**
+ * ===== Requirements =====
+ * - generates N orders for each money order the customer wants to 
+ *   make and assigns a different random uniqueness string number for 
+ *   each of the N ecash money orders
+ * - implements the secret splitting and bit commitment protocols used
+ *   to generate the identity strings that describe the customer's name,
+ *   address and any other piece of identifying information that the
+ *   bank wants to see.
+ * - implements a blind signature protocol for all N money orders
+ * - automatically complies to reveal the half of the identity string
+ *   chosen by the merchant
+ */
 public class Customer extends JPanel implements ActionListener{
 
 	/**

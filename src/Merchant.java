@@ -11,7 +11,12 @@ import java.net.Socket;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-
+/**
+ * ===== Requirements =====
+ * - verification of the legitimacy of the bank's signature
+ * - random generator of the selector string, which determines
+ *   the half of the identity string the customer is required to reveal
+ */
 public class Merchant extends JPanel implements ActionListener{
 
 	/**
