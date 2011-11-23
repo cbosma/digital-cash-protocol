@@ -1,15 +1,11 @@
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -99,7 +95,7 @@ public class Customer extends JPanel implements ActionListener{
 				catch(IOException ioException){
 					ioException.printStackTrace();
 				}
-			}
-		}
-	}
+			} // finally
+		} // end if
+	} // end method
 }
