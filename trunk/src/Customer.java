@@ -36,7 +36,7 @@ public class Customer extends JPanel implements ActionListener{
 	private JFrame frame = new JFrame("Customer");
 	private JTextField amount;
 	private JButton submit;
-
+	private JTextField error;
 	
 	/**
 	 * Constructor
@@ -94,12 +94,21 @@ public class Customer extends JPanel implements ActionListener{
 				System.out.println("Message sent from client");
 			}
 			catch(UnknownHostException unknownHost){
-				System.err.println("You are trying to connect to an unknown host!");
+				this.error = new JTextField("Unknown Host");
+				error.setEditable(false);
+				error.setHorizontalAlignment(JTextField.CENTER);
+				error.setToolTipText("You are trying to connect to an unknown host!");
+				this.frame.remove(this.amount);
+				this.frame.remove(this.submit);				
+				this.frame.add(error);
+				// Display the window
+				this.frame.pack();
+				this.frame.setVisible(true);
 			}
 			catch(IOException ioException){
 				ioException.printStackTrace();
 				
-				JTextField error = new JTextField("Error Connecting");
+				this.error = new JTextField("Error Connecting");
 				error.setEditable(false);
 				error.setHorizontalAlignment(JTextField.CENTER);
 				error.setToolTipText("Error Connecting");
