@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * ===== Requirements =====
  * The electronic cash (ecash) used during these transactions is a file
@@ -9,7 +11,7 @@
  *   illicitly - more than once);
  * - bank's signature (before the customer can use the ecash).
  */
-public class Ecash {
+public class Ecash implements Serializable{
 
 	// The amount of the transaction involved
 	private Double amount;
@@ -19,5 +21,15 @@ public class Ecash {
 
 	// TODO - add banks signature
 	// TODO - add identity strings which contain the identity of the customer
+	
+
+	public Double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
 
 }
