@@ -47,7 +47,7 @@ public class Merchant extends JPanel implements ActionListener{
 		frame.pack();
 		frame.setVisible(true);
 
-		String message = null;
+		Ecash message = null;
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 		ServerSocket providerSocket = null;
@@ -55,7 +55,7 @@ public class Merchant extends JPanel implements ActionListener{
 			//1. creating a server socket
 			providerSocket = new ServerSocket(2004, 10);
 			//2. Wait for connection
-			System.out.println("Waiting for connection");
+			System.out.println("Waiting for connection...");
 			Socket connection = providerSocket.accept();
 			System.out.println("Connection received from " + connection.getInetAddress().getHostName());
 			//3. get Input and Output streams
@@ -64,8 +64,9 @@ public class Merchant extends JPanel implements ActionListener{
 			in = new ObjectInputStream(connection.getInputStream());
 			//4. The two parts communicate via the input and output streams
 				try{
-					message = (String)in.readObject();
-					System.out.println("client says: " + message);
+					message = new Ecash();
+					message = (Ecash)in.readObject();
+					System.out.println("The amount sent was: " + message.getAmount());
 				}
 				catch(ClassNotFoundException classnot){
 					System.err.println("Data received in unknown format");
