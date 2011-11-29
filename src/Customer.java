@@ -1,5 +1,6 @@
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +13,6 @@ import java.net.UnknownHostException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 /**
  * ===== Requirements =====
@@ -34,10 +34,12 @@ public class Customer extends JPanel implements ActionListener{
 	 */
 	private static final long serialVersionUID = 8465685567853888181L;
 	private JFrame frame = new JFrame("Customer");
-	private JTextField amount;
-	private JButton submit;
-	private JTextField error;
-	
+	private JButton submit = null;
+	private TextField amount = null;
+	private TextField error = null;
+	private Double transationAmount = null;
+	private Ecash transcation = null;
+
 	/**
 	 * Constructor
 	 */
@@ -57,9 +59,8 @@ public class Customer extends JPanel implements ActionListener{
 		this.frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
 				.getWidth() - this.frame.getSize().width) / 2), 200);
 
-		amount = new JTextField("Amount:", 8);
-		amount.setHorizontalAlignment(JTextField.CENTER);
-		amount.setToolTipText("Enter the amount to transfer");
+		amount = new TextField();
+		amount.setText("Enter your amount");
 		this.frame.add(amount);
 
 		this.submit = new JButton("Submit");
@@ -78,61 +79,74 @@ public class Customer extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("submit")) {
 
-			ObjectOutputStream out = null;
-			ObjectInputStream in = null;
-			Socket requestSocket = null;
-			try{
-				//1. creating a socket to connect to the server
-				requestSocket = new Socket("localhost", 2004);
-				System.out.println("Connected to localhost in port 2004");
-				//2. get Input and Output streams
-				out = new ObjectOutputStream(requestSocket.getOutputStream());
-				out.flush();
-				in = new ObjectInputStream(requestSocket.getInputStream());
-				out.writeObject("Test Message to Server");
-				out.flush();
-				System.out.println("Message sent from client");
-			}
-			catch(UnknownHostException unknownHost){
-				this.error = new JTextField("Unknown Host");
-				error.setEditable(false);
-				error.setHorizontalAlignment(JTextField.CENTER);
-				error.setToolTipText("You are trying to connect to an unknown host!");
-				this.frame.remove(this.amount);
-				this.frame.remove(this.submit);				
-				this.frame.add(error);
-				// Display the window
-				this.frame.pack();
-				this.frame.setVisible(true);
-			}
-			catch(IOException ioException){
-				ioException.printStackTrace();
+			// If the amount TextField has data, try to make the connection
+			if ((amount.getText() != null && !amount.getText().isEmpty())){
+				transationAmount = Double.valueOf(amount.getText());
+				// Create new Ecash and set the amount
+				transcation = new Ecash();
+				transcation.setAmount(transationAmount);
 				
-				this.error = new JTextField("Error Connecting");
-				error.setEditable(false);
-				error.setHorizontalAlignment(JTextField.CENTER);
-				error.setToolTipText("Error Connecting");
-				this.frame.remove(this.amount);
-				this.frame.remove(this.submit);				
-				this.frame.add(error);
-				// Display the window
-				this.frame.pack();
-				this.frame.setVisible(true);
-				
-				
-			}
-			finally{
-				//4: Closing connection
+				ObjectOutputStream out = null;
+				ObjectInputStream in = null;
+				Socket requestSocket = null;
 				try{
-					in.close();
-					out.close();
-					requestSocket.close();
-					System.exit(0);
+					//1. creating a socket to connect to the server
+					requestSocket = new Socket("localhost", 2004);
+					System.out.println("Connected to localhost in port 2004");
+					//2. get Input and Output streams
+					out = new ObjectOutputStream(requestSocket.getOutputStream());
+					out.flush();
+					in = new ObjectInputStream(requestSocket.getInputStream());
+					// Send the Ecash to the merchant
+					out.writeObject(transcation);
+					out.flush();
+					System.out.println("Transcation Sent to Server...");
+				}
+
+				catch(UnknownHostException unknownHost){
+					this.error = new TextField("Unknown Host");
+					error.setEditable(false);
+					this.frame.remove(this.amount);
+					this.frame.remove(this.submit);				
+					this.frame.add(error);
+					// Display the window
+					this.frame.pack();
+					this.frame.setVisible(true);
 				}
 				catch(IOException ioException){
 					ioException.printStackTrace();
+					this.error = new TextField("Error Connecting");
+					error.setEditable(false);
+					this.frame.remove(this.amount);
+					this.frame.remove(this.submit);				
+					this.frame.add(error);
+					// Display the window
+					this.frame.pack();
+					this.frame.setVisible(true);				
 				}
-			} // finally
+				finally{
+					//4: Closing connection
+					try{
+						in.close();
+						out.close();
+						requestSocket.close();
+						System.exit(0);
+					}
+					catch(IOException ioException){
+						ioException.printStackTrace();
+					}
+				} // finally
+			} //end if text field is not empty
+			else{
+				this.error = new TextField("Error Connecting");
+				error.setEditable(false);
+				this.frame.remove(this.amount);
+				this.frame.remove(this.submit);				
+				this.frame.add(error);
+				// Display the window
+				this.frame.pack();
+				this.frame.setVisible(true);		
+			}
 		} // end if
 	} // end method
 }
