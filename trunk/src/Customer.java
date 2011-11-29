@@ -33,7 +33,11 @@ public class Customer extends JPanel implements ActionListener{
 	 * Randomly Generated Serial Version UID
 	 */
 	private static final long serialVersionUID = 8465685567853888181L;
+	private JFrame frame = new JFrame("Customer");
+	private JTextField amount;
+	private JButton submit;
 
+	
 	/**
 	 * Constructor
 	 */
@@ -46,29 +50,28 @@ public class Customer extends JPanel implements ActionListener{
 	 */
 	public void createAndShowGUI() {
 		// Create and set up the window
-		JFrame frame = new JFrame("Customer");
-		frame.setLayout(new GridLayout(2,1));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.frame.setLayout(new GridLayout(2,1));
+		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		frame.setMinimumSize(new Dimension(250, frame.getPreferredSize().height));
-		frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
-				.getWidth() - frame.getSize().width) / 2), 200);
+		this.frame.setMinimumSize(new Dimension(250, this.frame.getPreferredSize().height));
+		this.frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
+				.getWidth() - this.frame.getSize().width) / 2), 200);
 
-		JTextField amount = new JTextField("Amount:", 8);
+		amount = new JTextField("Amount:", 8);
 		amount.setHorizontalAlignment(JTextField.CENTER);
 		amount.setToolTipText("Enter the amount to transfer");
-		frame.add(amount);
+		this.frame.add(amount);
 
-		JButton submit = new JButton("Submit");
-		submit.addActionListener(this);
-		submit.setActionCommand("submit");
-		submit.setToolTipText("Submit your purchase");
-		submit.addActionListener(this);
-		frame.add(submit);
+		this.submit = new JButton("Submit");
+		this.submit.addActionListener(this);
+		this.submit.setActionCommand("submit");
+		this.submit.setToolTipText("Submit your purchase");
+		this.submit.addActionListener(this);
+		this.frame.add(submit);
 
 		// Display the window
-		frame.pack();
-		frame.setVisible(true);
+		this.frame.pack();
+		this.frame.setVisible(true);
 	}
 
 	@Override
@@ -95,6 +98,19 @@ public class Customer extends JPanel implements ActionListener{
 			}
 			catch(IOException ioException){
 				ioException.printStackTrace();
+				
+				JTextField error = new JTextField("Error Connecting");
+				error.setEditable(false);
+				error.setHorizontalAlignment(JTextField.CENTER);
+				error.setToolTipText("Error Connecting");
+				this.frame.remove(this.amount);
+				this.frame.remove(this.submit);				
+				this.frame.add(error);
+				// Display the window
+				this.frame.pack();
+				this.frame.setVisible(true);
+				
+				
 			}
 			finally{
 				//4: Closing connection
