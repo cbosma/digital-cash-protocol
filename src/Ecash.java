@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * ===== Requirements =====
@@ -23,10 +24,22 @@ public class Ecash implements Serializable{
 	// TODO - add identity strings which contain the identity of the customer
 	
 
+	/**
+	 * Constructor for E-Cash
+	 * @param amount - the amount of the money order
+	 * @param identity - identity string to be used for secret splitting
+	 * @param n - number of money orders and secrets to be made
+	 */
+	public Ecash(Double amount, String identity, int n){
+		// Create a random string
+		uniqueness = UUID.randomUUID().toString();
+	}
+	
 	public Double getAmount() {
 		return amount;
 	}
 
+	// Do we want this ability? or should this be in the constructor?
 	public void setAmount(Double amount) {
 		this.amount = amount;
 	}
