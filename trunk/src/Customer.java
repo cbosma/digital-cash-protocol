@@ -38,7 +38,9 @@ public class Customer extends JPanel implements ActionListener{
 	private TextField amount = null;
 	private TextField error = null;
 	private Double transationAmount = null;
-	private Ecash transcation = null;
+	private int numMoneyOrders = 100;
+	private String testIdentity = "test";
+	private Ecash[] moneyOrderArray = null; 
 
 	/**
 	 * Constructor
@@ -60,13 +62,13 @@ public class Customer extends JPanel implements ActionListener{
 				.getWidth() - this.frame.getSize().width) / 2), 200);
 
 		amount = new TextField();
-		amount.setText("Enter your amount");
+		amount.setText("Money Order Amount:");
 		this.frame.add(amount);
 
-		this.submit = new JButton("Submit");
+		this.submit = new JButton("Submit Money Order");
 		this.submit.addActionListener(this);
 		this.submit.setActionCommand("submit");
-		this.submit.setToolTipText("Submit your purchase");
+		this.submit.setToolTipText("Submit the Money Order");
 		this.submit.addActionListener(this);
 		this.frame.add(submit);
 
@@ -82,9 +84,12 @@ public class Customer extends JPanel implements ActionListener{
 			// If the amount TextField has data, try to make the connection
 			if ((amount.getText() != null && !amount.getText().isEmpty())){
 				transationAmount = Double.valueOf(amount.getText());
-				// Create new Ecash and set the amount
-				transcation = new Ecash();
-				transcation.setAmount(transationAmount);
+				
+				// Prepares 'n' anonymous money orders for a given amount
+				moneyOrderArray = new Ecash[numMoneyOrders];
+				for ( int i = 0; i < moneyOrderArray.length; i++ ){
+					moneyOrderArray[i] = new Ecash(transationAmount, testIdentity);
+				}
 				
 				ObjectOutputStream out = null;
 				ObjectInputStream in = null;
