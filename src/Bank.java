@@ -3,6 +3,11 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -23,6 +28,9 @@ import javax.swing.SpringLayout;
  */
 public class Bank extends JPanel implements ActionListener{
 
+	private Ecash[] moneyOrderArrayFromCustomer = null; 
+
+	
 	/**
 	 * Randomly Generated Serial Version UID
 	 */
@@ -61,6 +69,35 @@ public class Bank extends JPanel implements ActionListener{
 		// Display the window
 		frame.pack();
 		frame.setVisible(true);
+		
+		ObjectOutputStream out = null;
+		ObjectInputStream in = null;
+		ServerSocket providerSocket = null;
+		try {
+			//1. creating a server socket
+			providerSocket = new ServerSocket(2004, 10);
+			//2. Wait for connection
+			System.out.println("Waiting for connection from Customer...");
+			Socket connection = providerSocket.accept();
+			System.out.println("Connection received from Customer at " + connection.getInetAddress().getHostName());
+			//3. get Input and Output streams
+			out = new ObjectOutputStream(connection.getOutputStream());
+			out.flush();
+			in = new ObjectInputStream(connection.getInputStream());
+			//4. The two parts communicate via the input and output streams
+				try{
+					moneyOrderArrayFromCustomer = (Ecash[]) in.readObject();
+					System.out.println("Received " + moneyOrderArrayFromCustomer.length + " money orders from the Customer");
+				}
+				catch(ClassNotFoundException classnot){
+					System.err.println("Data received in unknown format");
+				}
+		}
+
+		catch(IOException ioException){
+			System.out.println("Error With Socket Connection");
+			ioException.printStackTrace();
+		}
 	}
 	
 	@Override
