@@ -53,6 +53,10 @@ public class Bank extends JPanel implements ActionListener{
 	 * Open the properties file, generate a default if it doesn't exist.
 	 * The use of default settings is only for functionality proofing,
 	 * real accounts would be stored in a database and encrypted.
+	 * 
+	 * For now, the properties file will consist of
+	 * customerBalance = [some integer]
+	 * merchantBalance = [some integer]
 	 */
 	private void readProperties() {
 		FileInputStream in=null;
