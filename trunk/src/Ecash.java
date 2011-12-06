@@ -38,4 +38,8 @@ public class Ecash implements Serializable{
 	public Double getAmount() {
 		return amount;
 	}
+	
+	public String getUniqueness() {
+		return uniqueness;
+	}
 }
