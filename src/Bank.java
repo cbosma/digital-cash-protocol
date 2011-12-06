@@ -1,5 +1,10 @@
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.TextArea;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,10 +18,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
+import javax.swing.border.Border;
 
 /**
  * ===== Requirements =====
@@ -30,11 +39,16 @@ import javax.swing.SpringLayout;
  *   database file
  * - Appropriate measures against reuse of the ecash
  */
-public class Bank extends JPanel implements ActionListener{
+public class Bank extends JFrame implements ActionListener{
 
 	private Ecash[] moneyOrderArrayFromCustomer = null; 
 
+	/**
+	 * Properties object that holds all account information
+	 */
 	private Properties accountProps = new Properties();
+	
+	private JTextArea status = new JTextArea();
 	
 	/**
 	 * Randomly Generated Serial Version UID
@@ -46,7 +60,9 @@ public class Bank extends JPanel implements ActionListener{
 	 */
 	public Bank() {
 		super();
+		status.append("Reading properties file...");
 		this.readProperties();
+		status.append("Initialized");
 	}
 	
 	/**
@@ -121,27 +137,44 @@ public class Bank extends JPanel implements ActionListener{
 	 */
 	public void createAndShowGUI() {
 		// Create and set up the window
-		JFrame frame = new JFrame("Bank");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setTitle("Bank");
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		frame.setMinimumSize(new Dimension(250, frame.getPreferredSize().height));
-		frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
-				.getWidth() - frame.getSize().width) / 2), 200);
+//		this.setMinimumSize(new Dimension(250, this.getPreferredSize().height));
+		this.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
+				.getWidth() - this.getSize().width) / 2), 200);
 
-		Container contentPane = frame.getContentPane();
+		Container contentPane = this.getContentPane();
+		this.setContentPane(contentPane);
 		SpringLayout layout = new SpringLayout();
-		contentPane.setLayout(layout);
+		this.setLayout(layout);
 		
 		JLabel title = new JLabel("The Bank");
 		contentPane.add(title);
-		layout.putConstraint(SpringLayout.NORTH, title, 5, SpringLayout.NORTH, contentPane);
-		layout.putConstraint(SpringLayout.WEST, title, 5, SpringLayout.WEST, contentPane);
-		layout.putConstraint(SpringLayout.EAST, contentPane, 5, SpringLayout.EAST, title);
-		layout.putConstraint(SpringLayout.SOUTH, contentPane, 5, SpringLayout.SOUTH, title);
+		
+		this.status = new JTextArea(5, 20);
+		JScrollPane scrollPane = new JScrollPane(this.status); 
+		this.status.setEditable(false);
+		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
+		contentPane.add(scrollPane);
+		
+		System.out.println("setting layouts");
+		
+//		// bind the top of the title to the top of the content pane
+		layout.putConstraint(SpringLayout.NORTH, title, 0, SpringLayout.NORTH, contentPane);
+		layout.putConstraint(SpringLayout.WEST, title, 0, SpringLayout.WEST, contentPane);
+		// bind the bottom of the scrollpane to the bottom of the content pane
+//		layout.putConstraint(SpringLayout.SOUTH, scrollPane, 0, SpringLayout.SOUTH, contentPane);
+//		layout.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, contentPane);
+		// bind the bottom right of the content pane to the bottom right of the status window
+		layout.putConstraint(SpringLayout.EAST, contentPane, 0, SpringLayout.EAST, scrollPane);
+		layout.putConstraint(SpringLayout.SOUTH, contentPane, 0, SpringLayout.SOUTH, scrollPane);
+		
+		System.out.println("done with layouts");
 		
 		// Display the window
-		frame.pack();
-		frame.setVisible(true);
+		this.pack();
+		this.setVisible(true);
 		
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
@@ -151,6 +184,7 @@ public class Bank extends JPanel implements ActionListener{
 			providerSocket = new ServerSocket(2004, 10);
 			//2. Wait for connection
 			System.out.println("Waiting for connection from Customer...");
+			status.append("Waiting...");
 			Socket connection = providerSocket.accept();
 			System.out.println("Connection received from Customer at " + connection.getInetAddress().getHostName());
 			//3. get Input and Output streams
@@ -171,12 +205,15 @@ public class Bank extends JPanel implements ActionListener{
 			System.out.println("Error With Socket Connection");
 			ioException.printStackTrace();
 		}
+		
+		this.repaint();
+		this.validate();
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("Action!!!!");
 	}
 
 }
