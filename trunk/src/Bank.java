@@ -245,7 +245,6 @@ public class Bank extends JFrame implements ActionListener{
 
 					}					
 				}
-
 			}
 		}
 		if ( matchingAmounts == true ){
