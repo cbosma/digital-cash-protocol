@@ -38,6 +38,7 @@ public class Bank extends JFrame implements ActionListener{
 	private double moneyOrderAmount;
 	private boolean matchingAmounts = true;
 	private boolean matchingUniqueness = false;
+	private boolean tmpUniqueness = false;
 
 	/**
 	 * Properties object that holds all account information
@@ -236,14 +237,19 @@ public class Bank extends JFrame implements ActionListener{
 				}
 				// If any two uniqueness string match set the matching unuqieness to true
 				if ( uniqueness != null){
+					tmpUniqueness = false;
 					for ( int j = 0; j < uniqueness.length; j++ ){
 						if ( uniqueness[j] != null){
 							if ( uniqueness[j].compareTo(moneyOrderArrayFromCustomer[i].getUniqueness()) == 0 ){
 								matchingUniqueness = true;
-							}							
+								tmpUniqueness = true;
+								System.err.println("The two Uniqueness Strings" + uniqueness[j].toString() + " are the same, you are cheating!");
+							}	
 						}
-
-					}					
+					}
+					if ( tmpUniqueness == false){
+						uniqueness[i] = moneyOrderArrayFromCustomer[i].getUniqueness();
+					}
 				}
 			}
 		}
