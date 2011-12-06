@@ -3,11 +3,15 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,6 +34,7 @@ public class Bank extends JPanel implements ActionListener{
 
 	private Ecash[] moneyOrderArrayFromCustomer = null; 
 
+	private Properties accountProps = new Properties();
 	
 	/**
 	 * Randomly Generated Serial Version UID
@@ -41,6 +46,70 @@ public class Bank extends JPanel implements ActionListener{
 	 */
 	public Bank() {
 		super();
+		this.readProperties();
+	}
+	
+	/**
+	 * Open the properties file, generate a default if it doesn't exist.
+	 * The use of default settings is only for functionality proofing,
+	 * real accounts would be stored in a database and encrypted.
+	 */
+	private void readProperties() {
+		FileInputStream in=null;
+		FileOutputStream out = null;
+		try {
+			in = new FileInputStream("accountProperties");
+		} catch (FileNotFoundException e) {
+			// No properties file, so making a default
+			try {
+				out = new FileOutputStream("accountProperties");
+			} catch (FileNotFoundException e2) {
+				// can't create a file
+				e2.printStackTrace();
+				System.exit(ERROR);
+			}
+			try {
+				accountProps.setProperty("customerBalance", "100");
+				accountProps.setProperty("merchantBalance", "100");
+				accountProps.store(out, "Default setup");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			try {
+				out.close();
+			} catch (IOException e1) {
+				// Error closing the file
+				System.out.println("Error closing the properties file.");
+				e1.printStackTrace();
+			}
+		}
+		try {
+			// utilize the in stream if it exists
+			if ( in != null ){
+				accountProps.load(in);
+			}
+		} catch (IOException e) {
+			// Error loading the properties file, create defaults
+			System.out.println("Error loading the properties");
+			accountProps.setProperty("customerBalance", "100");
+			accountProps.setProperty("merchantBalance", "100");
+			try {
+				accountProps.store(out, "Default setup");
+			} catch (IOException e1) {
+				// Error writing the account info back out
+				System.out.println("Error storing properties.");
+			}
+		}
+		try {
+			// close the in stream if it exists
+			if ( in != null ){
+				in.close();
+			}
+		} catch (IOException e) {
+			// Error closing the file
+			System.out.println("Error closing the properties file.");
+		}
+		
 	}
 	
 	/**
