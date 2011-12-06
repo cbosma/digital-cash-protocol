@@ -1,10 +1,4 @@
-import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.TextArea;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,11 +15,9 @@ import java.util.Properties;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
-import javax.swing.border.Border;
 
 /**
  * ===== Requirements =====
@@ -196,27 +188,7 @@ public class Bank extends JFrame implements ActionListener{
 			try{
 				moneyOrderArrayFromCustomer = (Ecash[]) in.readObject();
 				System.out.println("Received " + moneyOrderArrayFromCustomer.length + " money orders from the Customer");
-				// The bank checks the amount of n-1 money orders
-				// Open n-1 money orders and see that they all have the same amount
-				for ( int i = 0; i < moneyOrderArrayFromCustomer.length -1; i++ ){
-					// Save the first amount to compare to the others
-					if(i == 0){
-						moneyOrderAmount= moneyOrderArrayFromCustomer[i].getAmount();	
-					}
-					// Compare all other amounts to the first
-					else{
-						// If there is a mismatch then set the matching boolean to false
-						if( moneyOrderArrayFromCustomer[i].getAmount() != moneyOrderAmount){
-							matchingAmounts = false;
-						}
-					}
-				}
-				if ( matchingAmounts == true ){
-					System.out.println("All amounts matched!");
-				}
-				else{
-					System.err.println("The amounts did not match!");
-				}
+				compareMoneyOrders();
 			}
 			catch(ClassNotFoundException classnot){
 				System.err.println("Data received in unknown format");
@@ -236,6 +208,30 @@ public class Bank extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		System.out.println("Action!!!!");
+	}
+	
+	public void compareMoneyOrders(){
+		// The bank checks the amount of n-1 money orders
+		// Open n-1 money orders and see that they all have the same amount
+		for ( int i = 0; i < moneyOrderArrayFromCustomer.length -1; i++ ){
+			// Save the first amount to compare to the others
+			if(i == 0){
+				moneyOrderAmount= moneyOrderArrayFromCustomer[i].getAmount();	
+			}
+			// Compare all other amounts to the first
+			else{
+				// If there is a mismatch then set the matching boolean to false
+				if( moneyOrderArrayFromCustomer[i].getAmount() != moneyOrderAmount){
+					matchingAmounts = false;
+				}
+			}
+		}
+		if ( matchingAmounts == true ){
+			System.out.println("All amounts matched!");
+		}
+		else{
+			System.err.println("The amounts did not match!");
+		}	
 	}
 
 }
