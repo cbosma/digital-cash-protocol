@@ -42,7 +42,7 @@ import javax.swing.border.Border;
 public class Bank extends JFrame implements ActionListener{
 
 	private Ecash[] moneyOrderArrayFromCustomer = null; 
-
+	private double moneyOrderAmount;
 	/**
 	 * Properties object that holds all account information
 	 */
@@ -195,6 +195,17 @@ public class Bank extends JFrame implements ActionListener{
 				try{
 					moneyOrderArrayFromCustomer = (Ecash[]) in.readObject();
 					System.out.println("Received " + moneyOrderArrayFromCustomer.length + " money orders from the Customer");
+					// Open n-1 money orders and see that they all have the same amount
+					for ( int i = 0; i < moneyOrderArrayFromCustomer.length -1; i++ ){
+						if(i == 0){
+							moneyOrderAmount= moneyOrderArrayFromCustomer[i].getAmount();	
+						}
+						else{
+							if( moneyOrderArrayFromCustomer[i].getAmount() != moneyOrderAmount){
+								System.err.println("The amounts did not match!");
+							}
+						}
+					}
 				}
 				catch(ClassNotFoundException classnot){
 					System.err.println("Data received in unknown format");
