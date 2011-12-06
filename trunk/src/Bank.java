@@ -34,7 +34,7 @@ import javax.swing.SpringLayout;
 public class Bank extends JFrame implements ActionListener{
 
 	private Ecash[] moneyOrderArrayFromCustomer = null; 
-	private String[] uniqueness = null; 
+	private String[] uniqueness = new String[100]; 
 	private double moneyOrderAmount;
 	private boolean matchingAmounts = true;
 	private boolean matchingUniqueness = false;
@@ -224,7 +224,7 @@ public class Bank extends JFrame implements ActionListener{
 				if ( moneyOrderArrayFromCustomer[i].getAmount() != null ){
 					moneyOrderAmount= moneyOrderArrayFromCustomer[i].getAmount();					
 				}
-				if( uniqueness[i] != null ){
+				if( moneyOrderArrayFromCustomer[i].getUniqueness() != null ){
 					uniqueness[i] = moneyOrderArrayFromCustomer[i].getUniqueness();
 				}
 			}
@@ -235,11 +235,17 @@ public class Bank extends JFrame implements ActionListener{
 					matchingAmounts = false;
 				}
 				// If any two uniqueness string match set the matching unuqieness to true
-				for ( int j = 0; j < uniqueness.length; j++ ){
-					if ( uniqueness[j].compareTo(moneyOrderArrayFromCustomer[i].getUniqueness()) == 0 ){
-						matchingUniqueness = true;
-					}
+				if ( uniqueness != null){
+					for ( int j = 0; j < uniqueness.length; j++ ){
+						if ( uniqueness[j] != null){
+							if ( uniqueness[j].compareTo(moneyOrderArrayFromCustomer[i].getUniqueness()) == 0 ){
+								matchingUniqueness = true;
+							}							
+						}
+
+					}					
 				}
+
 			}
 		}
 		if ( matchingAmounts == true ){
