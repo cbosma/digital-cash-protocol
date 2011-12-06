@@ -150,19 +150,20 @@ public class Bank extends JFrame implements ActionListener{
 		contentPane.add(title);
 
 		this.status = new JTextArea(5, 20);
-		JScrollPane scrollPane = new JScrollPane(this.status); 
+		JScrollPane scrollPane = new JScrollPane(this.status);
+		scrollPane.setSize(500, 100);
 		this.status.setEditable(false);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
 		contentPane.add(scrollPane);
 
 		System.out.println("setting layouts");
-
-		//		// bind the top of the title to the top of the content pane
+		
+		// bind the top of the title to the top of the content pane
 		layout.putConstraint(SpringLayout.NORTH, title, 0, SpringLayout.NORTH, contentPane);
 		layout.putConstraint(SpringLayout.WEST, title, 0, SpringLayout.WEST, contentPane);
 		// bind the bottom of the scrollpane to the bottom of the content pane
-		//		layout.putConstraint(SpringLayout.SOUTH, scrollPane, 0, SpringLayout.SOUTH, contentPane);
-		//		layout.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, contentPane);
+//		layout.putConstraint(SpringLayout.SOUTH, scrollPane, 0, SpringLayout.SOUTH, contentPane);
+//		layout.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, contentPane);
 		// bind the bottom right of the content pane to the bottom right of the status window
 		layout.putConstraint(SpringLayout.EAST, contentPane, 0, SpringLayout.EAST, scrollPane);
 		layout.putConstraint(SpringLayout.SOUTH, contentPane, 0, SpringLayout.SOUTH, scrollPane);
