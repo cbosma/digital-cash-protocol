@@ -72,7 +72,7 @@ public class Bank extends JFrame implements ActionListener{
 	 * merchantBalance = [some integer]
 	 */
 	private void readProperties() {
-		FileInputStream in=null;
+		FileInputStream in = null;
 		FileOutputStream out = null;
 		try {
 			in = new FileInputStream("accountProperties");
@@ -184,16 +184,23 @@ public class Bank extends JFrame implements ActionListener{
 			status.append("Waiting...");
 			Socket connection = providerSocket.accept();
 			System.out.println("Connection received from Customer at " + connection.getInetAddress().getHostName());
-			//3. get Input and Output streams
-			out = new ObjectOutputStream(connection.getOutputStream());
-			out.flush();
+			//3. Get Input Stream
 			in = new ObjectInputStream(connection.getInputStream());
 			//4. The two parts communicate via the input and output streams
 			try{
 				moneyOrderArrayFromCustomer = (Ecash[]) in.readObject();
 				System.out.println("Received " + moneyOrderArrayFromCustomer.length + " money orders from the Customer");
 				// Compare the amounts of n-1 money orders check the uniqueness string 
-				compareMoneyOrders();				
+				if( compareMoneyOrders() == true ){
+					//TODO Bank signs the one remaining blinded money order
+					
+					// Bank hands the blinded money order back to Customer and deducts the amount from their account
+					out = new ObjectOutputStream(connection.getOutputStream());
+					out.flush();
+					out.writeObject(moneyOrderArrayFromCustomer[(moneyOrderArrayFromCustomer.length-1)]);
+					out.flush();
+					System.out.println("Send Money Order back to Customer");
+				}
 			}
 			catch(ClassNotFoundException classnot){
 				System.err.println("Data received in unknown format");
@@ -215,10 +222,10 @@ public class Bank extends JFrame implements ActionListener{
 		System.out.println("Action!!!!");
 	}
 
-	public void compareMoneyOrders(){
+	public Boolean compareMoneyOrders(){
 		// The bank checks the amount of n-1 money orders
 		// Open n-1 money orders and see that they all have the same amount
-		for ( int i = 0; i < moneyOrderArrayFromCustomer.length -1; i++ ){
+		for ( int i = 0; i < moneyOrderArrayFromCustomer.length -2; i++ ){
 
 			// Save the first amount and uniqueness string to compare to the others
 			if(i == 0){
@@ -253,18 +260,14 @@ public class Bank extends JFrame implements ActionListener{
 				}
 			}
 		}
-		if ( matchingAmounts == true ){
-			System.out.println("All amounts matched!");
+		if ( matchingAmounts == true && matchingUniqueness == false ){
+			System.out.println("All amounts matched and All Uniqueness String are different!");
+			return true;
 		}
 		else{
-			System.err.println("The amounts did not match, you are cheating!");
+			System.err.println("The amounts did not match or Two Uniqueness String are the same, you are cheating!");
+			return false;
 		}	
-		if ( matchingUniqueness == true){
-			System.err.println("Two Uniqueness String are the same, you are cheating!");			
-		}
-		else{
-			System.out.println("All Uniqueness String are different!");			
-		}
 	}
 
 }

@@ -84,13 +84,13 @@ public class Customer extends JPanel implements ActionListener{
 			// If the amount TextField has data, try to make the connection
 			if ((amount.getText() != null && !amount.getText().isEmpty())){
 				transationAmount = Double.valueOf(amount.getText());
-				
+
 				// Prepares 'n' anonymous money orders for a given amount
 				moneyOrderArray = new Ecash[numMoneyOrders];
 				for ( int i = 0; i < moneyOrderArray.length; i++ ){
 					moneyOrderArray[i] = new Ecash(transationAmount, testIdentity);
 				}
-				
+
 				ObjectOutputStream out = null;
 				ObjectInputStream in = null;
 				Socket requestSocket = null;
@@ -101,11 +101,15 @@ public class Customer extends JPanel implements ActionListener{
 					//2. get Input and Output streams
 					out = new ObjectOutputStream(requestSocket.getOutputStream());
 					out.flush();
-					in = new ObjectInputStream(requestSocket.getInputStream());
 					// Send the money order array to the bank
 					out.writeObject(moneyOrderArray);
 					out.flush();
 					System.out.println("Money Order Array Sent to the Bank...");
+					in = new ObjectInputStream(requestSocket.getInputStream());
+					Ecash testing = (Ecash) in.readObject();
+					System.out.println("Money Order Received back from bank for "+ testing.getAmount());
+
+
 				}
 
 				catch(UnknownHostException unknownHost){
@@ -128,6 +132,9 @@ public class Customer extends JPanel implements ActionListener{
 					// Display the window
 					this.frame.pack();
 					this.frame.setVisible(true);				
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 				finally{
 					//4: Closing connection
