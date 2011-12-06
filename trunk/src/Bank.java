@@ -43,13 +43,14 @@ public class Bank extends JFrame implements ActionListener{
 
 	private Ecash[] moneyOrderArrayFromCustomer = null; 
 	private double moneyOrderAmount;
+	private boolean matchingAmounts = true;
 	/**
 	 * Properties object that holds all account information
 	 */
 	private Properties accountProps = new Properties();
-	
+
 	private JTextArea status = new JTextArea();
-	
+
 	/**
 	 * Randomly Generated Serial Version UID
 	 */
@@ -64,7 +65,7 @@ public class Bank extends JFrame implements ActionListener{
 		this.readProperties();
 		status.append("Initialized");
 	}
-	
+
 	/**
 	 * Open the properties file, generate a default if it doesn't exist.
 	 * The use of default settings is only for functionality proofing,
@@ -129,9 +130,9 @@ public class Bank extends JFrame implements ActionListener{
 			// Error closing the file
 			System.out.println("Error closing the properties file.");
 		}
-		
+
 	}
-	
+
 	/**
 	 * Create the frame to hold the panel.
 	 */
@@ -140,7 +141,7 @@ public class Bank extends JFrame implements ActionListener{
 		this.setTitle("Bank");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-//		this.setMinimumSize(new Dimension(250, this.getPreferredSize().height));
+		//		this.setMinimumSize(new Dimension(250, this.getPreferredSize().height));
 		this.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
 				.getWidth() - this.getSize().width) / 2), 200);
 
@@ -148,34 +149,34 @@ public class Bank extends JFrame implements ActionListener{
 		this.setContentPane(contentPane);
 		SpringLayout layout = new SpringLayout();
 		this.setLayout(layout);
-		
+
 		JLabel title = new JLabel("The Bank");
 		contentPane.add(title);
-		
+
 		this.status = new JTextArea(5, 20);
 		JScrollPane scrollPane = new JScrollPane(this.status); 
 		this.status.setEditable(false);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
 		contentPane.add(scrollPane);
-		
+
 		System.out.println("setting layouts");
-		
-//		// bind the top of the title to the top of the content pane
+
+		//		// bind the top of the title to the top of the content pane
 		layout.putConstraint(SpringLayout.NORTH, title, 0, SpringLayout.NORTH, contentPane);
 		layout.putConstraint(SpringLayout.WEST, title, 0, SpringLayout.WEST, contentPane);
 		// bind the bottom of the scrollpane to the bottom of the content pane
-//		layout.putConstraint(SpringLayout.SOUTH, scrollPane, 0, SpringLayout.SOUTH, contentPane);
-//		layout.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, contentPane);
+		//		layout.putConstraint(SpringLayout.SOUTH, scrollPane, 0, SpringLayout.SOUTH, contentPane);
+		//		layout.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, contentPane);
 		// bind the bottom right of the content pane to the bottom right of the status window
 		layout.putConstraint(SpringLayout.EAST, contentPane, 0, SpringLayout.EAST, scrollPane);
 		layout.putConstraint(SpringLayout.SOUTH, contentPane, 0, SpringLayout.SOUTH, scrollPane);
-		
+
 		System.out.println("done with layouts");
-		
+
 		// Display the window
 		this.pack();
 		this.setVisible(true);
-		
+
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 		ServerSocket providerSocket = null;
@@ -192,35 +193,45 @@ public class Bank extends JFrame implements ActionListener{
 			out.flush();
 			in = new ObjectInputStream(connection.getInputStream());
 			//4. The two parts communicate via the input and output streams
-				try{
-					moneyOrderArrayFromCustomer = (Ecash[]) in.readObject();
-					System.out.println("Received " + moneyOrderArrayFromCustomer.length + " money orders from the Customer");
-					// Open n-1 money orders and see that they all have the same amount
-					for ( int i = 0; i < moneyOrderArrayFromCustomer.length -1; i++ ){
-						if(i == 0){
-							moneyOrderAmount= moneyOrderArrayFromCustomer[i].getAmount();	
-						}
-						else{
-							if( moneyOrderArrayFromCustomer[i].getAmount() != moneyOrderAmount){
-								System.err.println("The amounts did not match!");
-							}
+			try{
+				moneyOrderArrayFromCustomer = (Ecash[]) in.readObject();
+				System.out.println("Received " + moneyOrderArrayFromCustomer.length + " money orders from the Customer");
+				// The bank checks the amount of n-1 money orders
+				// Open n-1 money orders and see that they all have the same amount
+				for ( int i = 0; i < moneyOrderArrayFromCustomer.length -1; i++ ){
+					// Save the first amount to compare to the others
+					if(i == 0){
+						moneyOrderAmount= moneyOrderArrayFromCustomer[i].getAmount();	
+					}
+					// Compare all other amounts to the first
+					else{
+						// If there is a mismatch then set the matching boolean to false
+						if( moneyOrderArrayFromCustomer[i].getAmount() != moneyOrderAmount){
+							matchingAmounts = false;
 						}
 					}
 				}
-				catch(ClassNotFoundException classnot){
-					System.err.println("Data received in unknown format");
+				if ( matchingAmounts == true ){
+					System.out.println("All amounts matched!");
 				}
+				else{
+					System.err.println("The amounts did not match!");
+				}
+			}
+			catch(ClassNotFoundException classnot){
+				System.err.println("Data received in unknown format");
+			}
 		}
 
 		catch(IOException ioException){
 			System.out.println("Error With Socket Connection");
 			ioException.printStackTrace();
 		}
-		
+
 		this.repaint();
 		this.validate();
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
