@@ -34,8 +34,11 @@ import javax.swing.SpringLayout;
 public class Bank extends JFrame implements ActionListener{
 
 	private Ecash[] moneyOrderArrayFromCustomer = null; 
+	private String[] uniqueness = null; 
 	private double moneyOrderAmount;
 	private boolean matchingAmounts = true;
+	private boolean matchingUniqueness = false;
+
 	/**
 	 * Properties object that holds all account information
 	 */
@@ -188,7 +191,8 @@ public class Bank extends JFrame implements ActionListener{
 			try{
 				moneyOrderArrayFromCustomer = (Ecash[]) in.readObject();
 				System.out.println("Received " + moneyOrderArrayFromCustomer.length + " money orders from the Customer");
-				compareMoneyOrders();
+				// Compare the amounts of n-1 money orders check the uniqueness string 
+				compareMoneyOrders();				
 			}
 			catch(ClassNotFoundException classnot){
 				System.err.println("Data received in unknown format");
@@ -209,20 +213,32 @@ public class Bank extends JFrame implements ActionListener{
 		// TODO Auto-generated method stub
 		System.out.println("Action!!!!");
 	}
-	
+
 	public void compareMoneyOrders(){
 		// The bank checks the amount of n-1 money orders
 		// Open n-1 money orders and see that they all have the same amount
 		for ( int i = 0; i < moneyOrderArrayFromCustomer.length -1; i++ ){
-			// Save the first amount to compare to the others
+
+			// Save the first amount and uniqueness string to compare to the others
 			if(i == 0){
-				moneyOrderAmount= moneyOrderArrayFromCustomer[i].getAmount();	
+				if ( moneyOrderArrayFromCustomer[i].getAmount() != null ){
+					moneyOrderAmount= moneyOrderArrayFromCustomer[i].getAmount();					
+				}
+				if( uniqueness[i] != null ){
+					uniqueness[i] = moneyOrderArrayFromCustomer[i].getUniqueness();
+				}
 			}
-			// Compare all other amounts to the first
+			// Compare all other amounts and uniqueness strings  to the first
 			else{
 				// If there is a mismatch then set the matching boolean to false
 				if( moneyOrderArrayFromCustomer[i].getAmount() != moneyOrderAmount){
 					matchingAmounts = false;
+				}
+				// If any two uniqueness string match set the matching unuqieness to true
+				for ( int j = 0; j < uniqueness.length; j++ ){
+					if ( uniqueness[j].compareTo(moneyOrderArrayFromCustomer[i].getUniqueness()) == 0 ){
+						matchingUniqueness = true;
+					}
 				}
 			}
 		}
@@ -230,8 +246,14 @@ public class Bank extends JFrame implements ActionListener{
 			System.out.println("All amounts matched!");
 		}
 		else{
-			System.err.println("The amounts did not match!");
+			System.err.println("The amounts did not match, you are cheating!");
 		}	
+		if ( matchingUniqueness == true){
+			System.err.println("Two Uniqueness String are the same, you are cheating!");			
+		}
+		else{
+			System.out.println("All Uniqueness String are different!");			
+		}
 	}
 
 }
