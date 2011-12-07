@@ -7,8 +7,10 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.math.BigInteger;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -40,8 +42,41 @@ public class Customer extends JPanel implements ActionListener{
 	private Double transationAmount = null;
 	private int numMoneyOrders = 100;
 	private String testIdentity = "test";
-	private Ecash[] moneyOrderArray = null; 
+	private Ecash[] moneyOrderArray = null;
+	
+	// Constants
+	private static final String name = "Alice";
+	private static final String address = "8000 York Road Towson Maryland 21252";
+	private static final String phone = "410-704-2000";
+	private static final String email = "alice@towson.edu";
+	private static final String ssn = "123456789";
 
+	public void splitIdentity() {
+		System.out.println(name);
+
+		String binary = new BigInteger(name.getBytes()).toString(2);
+		System.out.println(binary);
+		
+		String key = "";
+		for (int i = 0; i < binary.length(); i++) {
+			Random randomGenerator = new Random();
+			int randomInt = randomGenerator.nextInt(2);
+			key += randomInt;
+		}
+		System.out.println(key);
+		
+		String temp = "";
+		for (int i = 0; i < binary.length() && i < key.length(); i++) {
+			temp += binary.charAt(i) ^ key.charAt(i);
+		}
+		System.out.println(temp);
+	
+		/*
+		String text2 = new String(new BigInteger(binary, 2).toByteArray());
+		System.out.println(text2);
+		*/
+	}
+	
 	/**
 	 * Constructor
 	 */
@@ -53,6 +88,7 @@ public class Customer extends JPanel implements ActionListener{
 	 * Create the frame to hold the panel.
 	 */
 	public void createAndShowGUI() {
+		splitIdentity();
 		// Create and set up the window
 		this.frame.setLayout(new GridLayout(2,1));
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
