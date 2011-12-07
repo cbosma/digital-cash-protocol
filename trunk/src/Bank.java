@@ -15,9 +15,12 @@ import java.util.Properties;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  * ===== Requirements =====
@@ -31,7 +34,7 @@ import javax.swing.SpringLayout;
  *   database file
  * - Appropriate measures against reuse of the ecash
  */
-public class Bank extends JFrame implements ActionListener{
+public class Bank extends JPanel implements ActionListener{
 
 	private Ecash[] moneyOrderArrayFromCustomer = null; 
 	private String[] uniqueness = new String[100]; 
@@ -45,7 +48,7 @@ public class Bank extends JFrame implements ActionListener{
 	 */
 	private Properties accountProps = new Properties();
 
-	private JTextArea status = new JTextArea();
+	private static JTextArea status = new JTextArea();
 
 	/**
 	 * Randomly Generated Serial Version UID
@@ -133,27 +136,28 @@ public class Bank extends JFrame implements ActionListener{
 	/**
 	 * Create the frame to hold the panel.
 	 */
-	public void createAndShowGUI() {
+	public static void createAndShowGUI() {
 		// Create and set up the window
-		this.setTitle("Bank");
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		JFrame frame = new JFrame("Bank");
+		frame.setTitle("Bank");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		//		this.setMinimumSize(new Dimension(250, this.getPreferredSize().height));
-		this.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
-				.getWidth() - this.getSize().width) / 2), 200);
+		frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
+				.getWidth() - frame.getSize().width) / 2), 200);
 
-		Container contentPane = this.getContentPane();
-		this.setContentPane(contentPane);
+		Container contentPane = frame.getContentPane();
+		frame.setContentPane(contentPane);
 		SpringLayout layout = new SpringLayout();
-		this.setLayout(layout);
+		frame.setLayout(layout);
 
 		JLabel title = new JLabel("The Bank");
 		contentPane.add(title);
 
-		this.status = new JTextArea(5, 20);
-		JScrollPane scrollPane = new JScrollPane(this.status);
+		status = new JTextArea(5, 20);
+		JScrollPane scrollPane = new JScrollPane(status);
 		scrollPane.setSize(500, 100);
-		this.status.setEditable(false);
+		status.setEditable(false);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
 		contentPane.add(scrollPane);
 
@@ -163,7 +167,7 @@ public class Bank extends JFrame implements ActionListener{
 		layout.putConstraint(SpringLayout.NORTH, title, 0, SpringLayout.NORTH, contentPane);
 		layout.putConstraint(SpringLayout.WEST, title, 0, SpringLayout.WEST, contentPane);
 		// bind the bottom of the scrollpane to the bottom of the content pane
-//		layout.putConstraint(SpringLayout.SOUTH, scrollPane, 0, SpringLayout.SOUTH, contentPane);
+		layout.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.SOUTH, title);
 //		layout.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, contentPane);
 		// bind the bottom right of the content pane to the bottom right of the status window
 		layout.putConstraint(SpringLayout.EAST, contentPane, 0, SpringLayout.EAST, scrollPane);
@@ -172,10 +176,23 @@ public class Bank extends JFrame implements ActionListener{
 		System.out.println("done with layouts");
 
 		// Display the window
-		this.pack();
-		this.setVisible(true);
+		frame.pack();
+		frame.setVisible(true);
 	}
+	
+	public static void main(String[] args) {
+		// Create and show the application
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				// Turn off bold fonts
+				UIManager.put("swing.boldMetal", Boolean.FALSE);
 
+				createAndShowGUI();
+			}
+		});
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
