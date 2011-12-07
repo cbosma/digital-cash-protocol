@@ -3,3 +3,6 @@
 = Introduction =
 
 http://zerioh.tripod.com/ressources/sockets.html
+
+http://www.ibm.com/developerworks/java/library/j-5things1/index.html
+section 3
