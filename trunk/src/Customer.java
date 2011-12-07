@@ -160,6 +160,16 @@ public class Customer extends JPanel implements ActionListener{
 					in = new ObjectInputStream(requestSocket.getInputStream());
 					Ecash signedEcashFromBank = (Ecash) in.readObject();
 					System.out.println("Money Order Received back from bank for "+ signedEcashFromBank.getAmount());
+					//1. creating a socket to connect to the server
+					requestSocket = new Socket("localhost", 2005);
+					System.out.println("Connected to localhost in port 2005");
+					//2. get Input and Output streams
+					out = new ObjectOutputStream(requestSocket.getOutputStream());
+					out.flush();
+					// Send the money order array to the bank
+					out.writeObject(signedEcashFromBank);
+					out.flush();
+					System.out.println("Money Order Array Sent to the Merchant...");					
 				}
 
 				catch(UnknownHostException unknownHost){
@@ -354,7 +364,6 @@ public class Customer extends JPanel implements ActionListener{
 						in.close();
 						out.close();
 						requestSocket.close();
-						System.exit(0);
 					}
 					catch(IOException ioException){
 						ioException.printStackTrace();
