@@ -56,7 +56,7 @@ public class Bank extends JPanel implements ActionListener{
 	/**
 	 * Properties object that holds all account information
 	 */
-	private Properties accountProps = new Properties();
+	private static Properties accountProps = new Properties();
 
 	private static JTextArea status = new JTextArea();
 
@@ -232,6 +232,8 @@ public class Bank extends JPanel implements ActionListener{
 				// Compare the amounts of n-1 money orders check the uniqueness string 
 				if( compareMoneyOrders() == true ){
 					System.out.println("Signed one Ecash Object to send back to Customer");
+					status.append("\nSigned one Ecash Object to send back to Customer");
+
 					// The bank signs one of the Ecash Objects
 					if ( signMoneyOrder(moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1]) ){
 						// Bank hands the blinded money order back to Customer 
@@ -239,10 +241,12 @@ public class Bank extends JPanel implements ActionListener{
 						out.flush();
 						out.writeObject(moneyOrderArrayFromCustomer[(moneyOrderArrayFromCustomer.length-1)]);
 						out.flush();
-						System.out.println("Send Money Order back to Customer");
+						System.out.println("Sent Money Order back to Customer");
+						status.append("\nSent Money Order back to Customer");
 
 						// Bank deducts the amount from their account
-						//TODO
+						accountProps.getProperty("customerBalance");
+;
 					}
 				}
 			}
