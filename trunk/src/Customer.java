@@ -106,10 +106,8 @@ public class Customer extends JPanel implements ActionListener{
 					out.flush();
 					System.out.println("Money Order Array Sent to the Bank...");
 					in = new ObjectInputStream(requestSocket.getInputStream());
-					Ecash testing = (Ecash) in.readObject();
-					System.out.println("Money Order Received back from bank for "+ testing.getAmount());
-
-
+					Ecash signedEcashFromBank = (Ecash) in.readObject();
+					System.out.println("Money Order Received back from bank for "+ signedEcashFromBank.getAmount());
 				}
 
 				catch(UnknownHostException unknownHost){
