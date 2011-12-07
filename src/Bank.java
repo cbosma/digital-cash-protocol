@@ -60,6 +60,7 @@ public class Bank extends JFrame implements ActionListener{
 		status.append("Reading properties file...");
 		this.readProperties();
 		status.append("Initialized");
+		this.setupSockets();
 	}
 
 	/**
@@ -173,7 +174,15 @@ public class Bank extends JFrame implements ActionListener{
 		// Display the window
 		this.pack();
 		this.setVisible(true);
+	}
 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println("Action!!!!");
+	}
+
+	private void setupSockets() {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 		ServerSocket providerSocket = null;
@@ -212,17 +221,8 @@ public class Bank extends JFrame implements ActionListener{
 			System.out.println("Error With Socket Connection");
 			ioException.printStackTrace();
 		}
-
-		this.repaint();
-		this.validate();
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("Action!!!!");
-	}
-
+	
 	public Boolean compareMoneyOrders(){
 		// The bank checks the amount of n-1 money orders
 		// Open n-1 money orders and see that they all have the same amount
