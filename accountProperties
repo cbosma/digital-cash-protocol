@@ -1,4 +1,5 @@
 #Default setup
 #Tue Dec 06 13:32:50 EST 2011
+accountNum=0123456789
 merchantBalance=100
 customerBalance=100

@@ -1,4 +1,6 @@
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -84,7 +86,7 @@ public class Bank extends JPanel implements ActionListener{
 	 * customerBalance = [some integer]
 	 * merchantBalance = [some integer]
 	 */
-	private void readProperties() {
+	private static void readProperties() {
 		FileInputStream in = null;
 		FileOutputStream out = null;
 		try {
@@ -101,6 +103,7 @@ public class Bank extends JPanel implements ActionListener{
 			try {
 				accountProps.setProperty("customerBalance", "100");
 				accountProps.setProperty("merchantBalance", "100");
+				accountProps.setProperty("accountNum", "0123456789");
 				accountProps.store(out, "Default setup");
 			} catch (IOException e1) {
 				e1.printStackTrace();
@@ -151,11 +154,12 @@ public class Bank extends JPanel implements ActionListener{
 		frame.setTitle("Bank");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		//		this.setMinimumSize(new Dimension(250, this.getPreferredSize().height));
+		//frame.setMinimumSize(new Dimension(, this.getPreferredSize().height));
 		frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
 				.getWidth() - frame.getSize().width) / 2), 200);
 
 		Container contentPane = frame.getContentPane();
+		contentPane.setMinimumSize(new Dimension(400, frame.getPreferredSize().height));
 		frame.setContentPane(contentPane);
 		SpringLayout layout = new SpringLayout();
 		frame.setLayout(layout);
@@ -163,6 +167,17 @@ public class Bank extends JPanel implements ActionListener{
 		JLabel title = new JLabel("The Bank");
 		contentPane.add(title);
 
+		TextField accountNum = new TextField();
+		accountNum.setText("Account Number:" + accountProps.getProperty("accountNum"));
+		accountNum.setEditable(false);
+		
+		TextField customerBalance = new TextField();
+		customerBalance.setText("Account Balance:" + accountProps.getProperty("customerBalance"));
+		customerBalance.setEditable(false);
+		
+		contentPane.add(accountNum);
+		contentPane.add(customerBalance);
+		
 		status = new JTextArea(5, 20);
 		JScrollPane scrollPane = new JScrollPane(status);
 		scrollPane.setSize(500, 100);
@@ -173,8 +188,10 @@ public class Bank extends JPanel implements ActionListener{
 		// bind the top of the title to the top of the content pane
 		layout.putConstraint(SpringLayout.NORTH, title, 0, SpringLayout.NORTH, contentPane);
 		layout.putConstraint(SpringLayout.WEST, title, 0, SpringLayout.WEST, contentPane);
+		layout.putConstraint(SpringLayout.NORTH, accountNum, 0, SpringLayout.SOUTH, title);
+		layout.putConstraint(SpringLayout.NORTH, customerBalance, 0, SpringLayout.SOUTH, accountNum);
 		// bind the bottom of the scrollpane to the bottom of the content pane
-		layout.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.SOUTH, title);
+		layout.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.SOUTH, customerBalance);
 		// bind the bottom right of the content pane to the bottom right of the status window
 		layout.putConstraint(SpringLayout.EAST, contentPane, 0, SpringLayout.EAST, scrollPane);
 		layout.putConstraint(SpringLayout.SOUTH, contentPane, 0, SpringLayout.SOUTH, scrollPane);
@@ -193,6 +210,7 @@ public class Bank extends JPanel implements ActionListener{
 			public void run() {
 				// Turn off bold fonts
 				UIManager.put("swing.boldMetal", Boolean.FALSE);
+				readProperties();
 				createAndShowGUI();
 				setupSockets();
 
@@ -231,22 +249,35 @@ public class Bank extends JPanel implements ActionListener{
 				System.out.println("Received " + moneyOrderArrayFromCustomer.length + " money orders from the Customer");
 				// Compare the amounts of n-1 money orders check the uniqueness string 
 				if( compareMoneyOrders() == true ){
-					System.out.println("Signed one Ecash Object to send back to Customer");
-					status.append("\nSigned one Ecash Object to send back to Customer");
+					// Bank deducts the amount from their account
+					Double currBalance = Double.valueOf(accountProps.getProperty("customerBalance"));
+					
+					// Check to see the the Customer has enough money to complete the withdraw
+					if ( currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()) >= 0 ){
+						accountProps.setProperty("customerBalance", String.valueOf((currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()))));
+						System.out.println("Money was removed from Customers Account");
+						status.append("\nMoney was removed from Customers Account");
 
-					// The bank signs one of the Ecash Objects
-					if ( signMoneyOrder(moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1]) ){
-						// Bank hands the blinded money order back to Customer 
-						out = new ObjectOutputStream(connection.getOutputStream());
-						out.flush();
-						out.writeObject(moneyOrderArrayFromCustomer[(moneyOrderArrayFromCustomer.length-1)]);
-						out.flush();
-						System.out.println("Sent Money Order back to Customer");
-						status.append("\nSent Money Order back to Customer");
-
-						// Bank deducts the amount from their account
-						accountProps.getProperty("customerBalance");
-;
+						// The bank signs one of the Ecash Objects
+						if ( signMoneyOrder(moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1])){
+							System.out.println("Signed one Ecash Object to send back to Customer");
+							status.append("\nSigned one Ecash Object to send back to Customer");
+							// Bank hands the blinded money order back to Customer 
+							out = new ObjectOutputStream(connection.getOutputStream());
+							out.flush();
+							out.writeObject(moneyOrderArrayFromCustomer[(moneyOrderArrayFromCustomer.length-1)]);
+							out.flush();
+							System.out.println("Sent Money Order back to Customer");
+							status.append("\nSent Money Order back to Customer");
+						}
+						else{
+							System.out.println("Bank could not sign the Money Order");
+							status.append("\nBank could not sign the Money Order");							
+						}
+					}
+					else{
+						System.out.println("Customer does not have sufficient funds");
+						status.append("\nCustomer does not have sufficient funds");							
 					}
 				}
 			}
