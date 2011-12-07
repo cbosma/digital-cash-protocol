@@ -10,6 +10,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.SignedObject;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -21,6 +30,7 @@ import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
 
 /**
  * ===== Requirements =====
@@ -159,7 +169,7 @@ public class Bank extends JPanel implements ActionListener{
 		status.setEditable(false);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
 		contentPane.add(scrollPane);
-		
+
 		// bind the top of the title to the top of the content pane
 		layout.putConstraint(SpringLayout.NORTH, title, 0, SpringLayout.NORTH, contentPane);
 		layout.putConstraint(SpringLayout.WEST, title, 0, SpringLayout.WEST, contentPane);
@@ -172,10 +182,10 @@ public class Bank extends JPanel implements ActionListener{
 		// Display the window
 		frame.pack();
 		frame.setVisible(true);
-		
+
 		status.append("Initialized...");
 	}
-	
+
 	public static void main(String[] args) {
 		// Create and show the application
 		SwingUtilities.invokeLater(new Runnable() {
@@ -184,19 +194,20 @@ public class Bank extends JPanel implements ActionListener{
 				// Turn off bold fonts
 				UIManager.put("swing.boldMetal", Boolean.FALSE);
 				createAndShowGUI();
+				setupSockets();
+
 			}
 		});
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
-//				setupSockets();
-//			}
-//		});
+		//		SwingUtilities.invokeLater(new Runnable() {
+		//			@Override
+		//			public void run() {
+		//				setupSockets();
+		//			}
+		//		});
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		System.out.println("Action!!!!");
 	}
 
@@ -220,14 +231,19 @@ public class Bank extends JPanel implements ActionListener{
 				System.out.println("Received " + moneyOrderArrayFromCustomer.length + " money orders from the Customer");
 				// Compare the amounts of n-1 money orders check the uniqueness string 
 				if( compareMoneyOrders() == true ){
-					//TODO Bank signs the one remaining blinded money order
-					
-					// Bank hands the blinded money order back to Customer and deducts the amount from their account
-					out = new ObjectOutputStream(connection.getOutputStream());
-					out.flush();
-					out.writeObject(moneyOrderArrayFromCustomer[(moneyOrderArrayFromCustomer.length-1)]);
-					out.flush();
-					System.out.println("Send Money Order back to Customer");
+					System.out.println("Signed one Ecash Object to send back to Customer");
+					// The bank signs one of the Ecash Objects
+					if ( signMoneyOrder(moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1]) ){
+						// Bank hands the blinded money order back to Customer 
+						out = new ObjectOutputStream(connection.getOutputStream());
+						out.flush();
+						out.writeObject(moneyOrderArrayFromCustomer[(moneyOrderArrayFromCustomer.length-1)]);
+						out.flush();
+						System.out.println("Send Money Order back to Customer");
+
+						// Bank deducts the amount from their account
+						//TODO
+					}
 				}
 			}
 			catch(ClassNotFoundException classnot){
@@ -240,7 +256,44 @@ public class Bank extends JPanel implements ActionListener{
 			ioException.printStackTrace();
 		}
 	}
-	
+
+	public static Boolean signMoneyOrder(Ecash ecashToSign){
+		// The Bank is satisfied that Customer did not make any attempts to cheat, so sign the one remaining money order 
+		try {
+
+			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
+			keyGen.initialize(1024);
+			KeyPair keypair = keyGen.genKeyPair();
+			PrivateKey privateKey = keypair.getPrivate();
+			PublicKey publicKey = keypair.getPublic();
+
+			Signature sig = Signature.getInstance(privateKey.getAlgorithm());
+			SignedObject signedObject = new SignedObject(ecashToSign, privateKey, sig);
+			sig = Signature.getInstance(publicKey.getAlgorithm());
+			if ( signedObject.verify(publicKey, sig) ){
+				return true;
+			}
+			else{
+				return false;
+			}
+		} 
+
+		catch (NoSuchAlgorithmException e) {
+			System.err.println("Error Signing Ecash Object");
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			System.err.println("Error Signing Ecash Object");
+			e.printStackTrace();
+		} catch (SignatureException e) {
+			System.err.println("Error Signing Ecash Object");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("Error Signing Ecash Object");
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public static Boolean compareMoneyOrders(){
 		// The bank checks the amount of n-1 money orders
 		// Open n-1 money orders and see that they all have the same amount
