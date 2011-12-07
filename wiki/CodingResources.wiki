@@ -4,4 +4,4 @@
 
 http://zerioh.tripod.com/ressources/sockets.html
 
-http://www.kodejava.org/browse/43.html
+http://www.java2s.com/Tutorial/Java/0490__Security/SigningaJavaObject.htm
