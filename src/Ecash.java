@@ -42,4 +42,8 @@ public class Ecash implements Serializable{
 	public String getUniqueness() {
 		return uniqueness;
 	}
+	
+	public void setUniqueness(String incomingUniqueness) {
+		uniqueness = incomingUniqueness;
+	}
 }
