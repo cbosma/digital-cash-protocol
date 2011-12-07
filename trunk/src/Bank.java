@@ -347,6 +347,8 @@ public class Bank extends JPanel implements ActionListener{
 			else{
 				// If there is a mismatch then set the matching boolean to false
 				if( moneyOrderArrayFromCustomer[i].getAmount() != moneyOrderAmount){
+					System.err.println("The amounts do not match for " + moneyOrderArrayFromCustomer[i].getAmount() + " and " + moneyOrderAmount);
+					status.append("\nThe amounts do not match for " + moneyOrderArrayFromCustomer[i].getAmount() + " and " + moneyOrderAmount);
 					matchingAmounts = false;
 				}
 				// If any two uniqueness string match set the matching unuqieness to true
@@ -357,7 +359,8 @@ public class Bank extends JPanel implements ActionListener{
 							if ( uniqueness[j].compareTo(moneyOrderArrayFromCustomer[i].getUniqueness()) == 0 ){
 								matchingUniqueness = true;
 								tmpUniqueness = true;
-								System.err.println("The two Uniqueness Strings" + uniqueness[j].toString() + " are the same, you are cheating!");
+								System.err.println("The two Uniqueness Strings " + uniqueness[j].toString() + " are the same, you are cheating!");
+								status.append("\nThe two Uniqueness Strings " + uniqueness[j].toString() + " are the same, you are cheating!");
 							}	
 						}
 					}
@@ -369,10 +372,12 @@ public class Bank extends JPanel implements ActionListener{
 		}
 		if ( matchingAmounts == true && matchingUniqueness == false ){
 			System.out.println("All amounts matched and All Uniqueness String are different!");
+			status.append("\nAll amounts matched and All Uniqueness String are different!");
 			return true;
 		}
 		else{
 			System.err.println("The amounts did not match or Two Uniqueness String are the same, you are cheating!");
+			status.append("\nThe amounts did not match or Two Uniqueness String are the same, you are cheating!");
 			return false;
 		}	
 	}
