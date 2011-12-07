@@ -36,12 +36,12 @@ import javax.swing.UIManager;
  */
 public class Bank extends JPanel implements ActionListener{
 
-	private Ecash[] moneyOrderArrayFromCustomer = null; 
-	private String[] uniqueness = new String[100]; 
-	private double moneyOrderAmount;
-	private boolean matchingAmounts = true;
-	private boolean matchingUniqueness = false;
-	private boolean tmpUniqueness = false;
+	private static Ecash[] moneyOrderArrayFromCustomer = null; 
+	private static String[] uniqueness = new String[100]; 
+	private static double moneyOrderAmount;
+	private static boolean matchingAmounts = true;
+	private static boolean matchingUniqueness = false;
+	private static boolean tmpUniqueness = false;
 
 	/**
 	 * Properties object that holds all account information
@@ -63,7 +63,6 @@ public class Bank extends JPanel implements ActionListener{
 		status.append("Reading properties file...");
 		this.readProperties();
 		status.append("Initialized");
-		this.setupSockets();
 	}
 
 	/**
@@ -160,24 +159,21 @@ public class Bank extends JPanel implements ActionListener{
 		status.setEditable(false);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
 		contentPane.add(scrollPane);
-
-		System.out.println("setting layouts");
 		
 		// bind the top of the title to the top of the content pane
 		layout.putConstraint(SpringLayout.NORTH, title, 0, SpringLayout.NORTH, contentPane);
 		layout.putConstraint(SpringLayout.WEST, title, 0, SpringLayout.WEST, contentPane);
 		// bind the bottom of the scrollpane to the bottom of the content pane
 		layout.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.SOUTH, title);
-//		layout.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, contentPane);
 		// bind the bottom right of the content pane to the bottom right of the status window
 		layout.putConstraint(SpringLayout.EAST, contentPane, 0, SpringLayout.EAST, scrollPane);
 		layout.putConstraint(SpringLayout.SOUTH, contentPane, 0, SpringLayout.SOUTH, scrollPane);
 
-		System.out.println("done with layouts");
-
 		// Display the window
 		frame.pack();
 		frame.setVisible(true);
+		
+		status.append("Initialized...");
 	}
 	
 	public static void main(String[] args) {
@@ -187,10 +183,15 @@ public class Bank extends JPanel implements ActionListener{
 			public void run() {
 				// Turn off bold fonts
 				UIManager.put("swing.boldMetal", Boolean.FALSE);
-
 				createAndShowGUI();
 			}
 		});
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				setupSockets();
+//			}
+//		});
 	}
 	
 	@Override
@@ -199,7 +200,7 @@ public class Bank extends JPanel implements ActionListener{
 		System.out.println("Action!!!!");
 	}
 
-	private void setupSockets() {
+	private static void setupSockets() {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 		ServerSocket providerSocket = null;
@@ -240,7 +241,7 @@ public class Bank extends JPanel implements ActionListener{
 		}
 	}
 	
-	public Boolean compareMoneyOrders(){
+	public static Boolean compareMoneyOrders(){
 		// The bank checks the amount of n-1 money orders
 		// Open n-1 money orders and see that they all have the same amount
 		for ( int i = 0; i < moneyOrderArrayFromCustomer.length -2; i++ ){
