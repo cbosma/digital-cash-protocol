@@ -50,8 +50,6 @@ public class Customer extends JPanel implements ActionListener{
 	private static final String name = "Alice";
 	private static final String address = "8000 York Road Towson Maryland 21252";
 	private static final String phone = "410-704-2000";
-	private static final String email = "alice@towson.edu";
-	private static final String ssn = "123456789";
 
 	public static String generateKey(String M) {
 		String key = "";
@@ -82,83 +80,16 @@ public class Customer extends JPanel implements ActionListener{
 	}
 	
 	public static void splitIdentity() {
-		String M = "";
-		String L = "";
-		String R = "";
-		
-		// Name
 		// Convert the message to 1's and 0's
+		String M = name + " " + address + " " + phone;
+		System.out.println(M);
 		M = new BigInteger(name.getBytes()).toString(2);
 		
 		// Generate the key, L
-		L = generateKey(M);
+		String L = generateKey(M);
 		
 		// XOR M and L to get R
-		R = "";
-		for (int i = 0; i < M.length() && i < L.length(); i++) {
-			R += M.charAt(i) ^ L.charAt(i);
-		}
-		
-		System.out.println(commitment (L));
-		System.out.println(commitment (R));
-		
-		// Address
-		// Convert the message to 1's and 0's
-		M = new BigInteger(address.getBytes()).toString(2);
-		
-		// Generate the key, L
-		L = generateKey(M);
-		
-		// XOR M and L to get R
-		R = "";
-		for (int i = 0; i < M.length() && i < L.length(); i++) {
-			R += M.charAt(i) ^ L.charAt(i);
-		}
-		
-		System.out.println(commitment (L));
-		System.out.println(commitment (R));
-		
-		// Phone
-		// Convert the message to 1's and 0's
-		M = new BigInteger(phone.getBytes()).toString(2);
-		
-		// Generate the key, L
-		L = generateKey(M);
-		
-		// XOR M and L to get R
-		R = "";
-		for (int i = 0; i < M.length() && i < L.length(); i++) {
-			R += M.charAt(i) ^ L.charAt(i);
-		}
-		
-		System.out.println(commitment (L));
-		System.out.println(commitment (R));
-		
-		// Email
-		// Convert the message to 1's and 0's
-		M = new BigInteger(email.getBytes()).toString(2);
-		
-		// Generate the key, L
-		L = generateKey(M);
-		
-		// XOR M and L to get R
-		R = "";
-		for (int i = 0; i < M.length() && i < L.length(); i++) {
-			R += M.charAt(i) ^ L.charAt(i);
-		}
-		
-		System.out.println(commitment (L));
-		System.out.println(commitment (R));
-		
-		// SSN
-		// Convert the message to 1's and 0's
-		M = new BigInteger(ssn.getBytes()).toString(2);
-		
-		// Generate the key, L
-		L = generateKey(M);
-		
-		// XOR M and L to get R
-		R = "";
+		String R = "";
 		for (int i = 0; i < M.length() && i < L.length(); i++) {
 			R += M.charAt(i) ^ L.charAt(i);
 		}
