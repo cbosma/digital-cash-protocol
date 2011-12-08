@@ -1,8 +1,3 @@
-import java.awt.Dimension;
-import java.awt.TextField;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,16 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignedObject;
-
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 /**
  * ===== Requirements =====
@@ -27,49 +15,24 @@ import javax.swing.JTextArea;
  * - random generator of the selector string, which determines
  *   the half of the identity string the customer is required to reveal
  */
-public class Merchant extends JPanel implements ActionListener{
+public class MerchantServer extends Thread {
 
 
 	private Ecash EcashFromCustomer = null;
 	private static SignedObject signedObject;
-
-	private JTextArea status = new JTextArea();
 	
-	/**
-	 * Randomly Generated Serial Version UID
-	 */
-	private static final long serialVersionUID = 8465685567853888181L;
-
 	/**
 	 * Constructor
 	 */
-	public Merchant() {
-		super();
+	@Override
+	public void run() {
+		setupSockets();
 	}
 
 	/**
 	 * Create the frame to hold the panel.
 	 */
-	public void createAndShowGUI() {
-		// Create and set up the window
-		JFrame frame = new JFrame("Merchant");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		frame.setMinimumSize(new Dimension(500, frame.getPreferredSize().height));
-		frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
-				.getWidth() - frame.getSize().width) / 2), 200);
-		
-		this.status = new JTextArea(5, 20);
-		JScrollPane scrollPane = new JScrollPane(this.status);
-		scrollPane.setSize(500, 100);
-		this.status.setEditable(false);
-		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
-		frame.add(scrollPane);
-
-		// Display the window
-		frame.pack();
-		frame.setVisible(true);
-
+	public void setupSockets() {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 		ServerSocket providerSocket = null;
@@ -78,6 +41,7 @@ public class Merchant extends JPanel implements ActionListener{
 			providerSocket = new ServerSocket(2005, 10);
 			//2. Wait for connection
 			System.out.println("Waiting for connection from Customer...");
+			MerchantInterface.status.append("Waiting for connection from Customer...");
 
 			Socket connection = providerSocket.accept();
 			System.out.println("Connection received from Customer at " + connection.getInetAddress().getHostName());
@@ -112,14 +76,8 @@ public class Merchant extends JPanel implements ActionListener{
 			System.out.println("Error With Socket Connection");
 			ioException.printStackTrace();
 		}
-
-
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	}
-
+	
 	private static Object readFromFile(String filename) throws Exception {
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
@@ -141,7 +99,5 @@ public class Merchant extends JPanel implements ActionListener{
 		}
 		return object;
 	}
-
-
 
 }
