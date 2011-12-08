@@ -53,9 +53,9 @@ public class BankServer extends Thread{
 	public void run() {
 		readProperties();
 		BankInterface.accountNum.setText("Account Number: " + BankServer.accountProps.getProperty("accountNum"));
-		BankInterface.customerBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("customerBalance"));
+		BankInterface.customerBalance.setText("Account Balance: $" + BankServer.accountProps.getProperty("customerBalance"));
 		BankInterface.merchAccountNum.setText("Account Number: " + BankServer.accountProps.getProperty("merchAccountNum"));
-		BankInterface.merchantBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("merchantBalance"));
+		BankInterface.merchantBalance.setText("Account Balance: $" + BankServer.accountProps.getProperty("merchantBalance"));
 		setupSockets();
 	}
 
@@ -154,7 +154,7 @@ public class BankServer extends Thread{
 					if ( currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()) >= 0 ){
 						accountProps.setProperty("customerBalance", String.valueOf((currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()))));
 						BankInterface.accountNum.setText("Account Number: " + BankServer.accountProps.getProperty("accountNum"));
-						BankInterface.customerBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("customerBalance"));
+						BankInterface.customerBalance.setText("Account Balance: $" + BankServer.accountProps.getProperty("customerBalance"));
 						System.out.println(String.valueOf((currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()))));
 						System.out.println("Money was removed from Customers Account");
 						BankInterface.status.append("\nMoney was removed from Customers Account");
@@ -215,7 +215,7 @@ public class BankServer extends Thread{
 													System.out.println("The Uniqueness ID is good!");
 													BankInterface.status.append("\nThe Uniqueness ID is good!");
 													accountProps.setProperty("merchantBalance", String.valueOf((currBalance + (EcashFromMerchant.getAmount()))));
-													BankInterface.merchantBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("merchantBalance"));
+													BankInterface.merchantBalance.setText("Account Balance: $" + BankServer.accountProps.getProperty("merchantBalance"));
 													System.out.println("The money order has been deposited into the merchants account.");
 													BankInterface.status.append("\nThe money order has been deposited into the merchants account.");
 													connection.close();
@@ -229,7 +229,7 @@ public class BankServer extends Thread{
 											System.out.println("The Uniqueness ID is good!");
 											BankInterface.status.append("\nThe Uniqueness ID is good!");
 											accountProps.setProperty("merchantBalance", String.valueOf((currBalance + (EcashFromMerchant.getAmount()))));
-											BankInterface.merchantBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("merchantBalance"));
+											BankInterface.merchantBalance.setText("Account Balance: $" + BankServer.accountProps.getProperty("merchantBalance"));
 											System.out.println("The money order has been deposited into the merchants account.");
 											BankInterface.status.append("\nThe money order has been deposited into the merchants account.");
 											connection.close();
