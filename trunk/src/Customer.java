@@ -205,25 +205,11 @@ public class Customer extends JPanel implements ActionListener{
 				}
 
 				catch(UnknownHostException unknownHost){
-					this.error = new TextField("Unknown Host");
-					error.setEditable(false);
-					this.frame.remove(this.amount);
-					this.frame.remove(this.submit);				
-					this.frame.add(error);
-					// Display the window
-					this.frame.pack();
-					this.frame.setVisible(true);
+					status.append("Unknown Host");
 				}
 				catch(IOException ioException){
 					ioException.printStackTrace();
-					this.error = new TextField("Error Connecting");
-					error.setEditable(false);
-					this.frame.remove(this.amount);
-					this.frame.remove(this.submit);				
-					this.frame.add(error);
-					// Display the window
-					this.frame.pack();
-					this.frame.setVisible(true);				
+					status.append("Error Connecting");				
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -242,14 +228,7 @@ public class Customer extends JPanel implements ActionListener{
 				} // finally
 			} //end if text field is not empty
 			else{
-				this.error = new TextField("Error Connecting");
-				error.setEditable(false);
-				this.frame.remove(this.amount);
-				this.frame.remove(this.submit);				
-				this.frame.add(error);
-				// Display the window
-				this.frame.pack();
-				this.frame.setVisible(true);		
+				status.append("Error Connecting");		
 			}
 		} // end if
 
@@ -286,25 +265,11 @@ public class Customer extends JPanel implements ActionListener{
 				}
 
 				catch(UnknownHostException unknownHost){
-					this.error = new TextField("Unknown Host");
-					error.setEditable(false);
-					this.frame.remove(this.amount);
-					this.frame.remove(this.submit);				
-					this.frame.add(error);
-					// Display the window
-					this.frame.pack();
-					this.frame.setVisible(true);
+					status.append("Unknown Host");
 				}
 				catch(IOException ioException){
 					ioException.printStackTrace();
-					this.error = new TextField("Error Connecting");
-					error.setEditable(false);
-					this.frame.remove(this.amount);
-					this.frame.remove(this.submit);				
-					this.frame.add(error);
-					// Display the window
-					this.frame.pack();
-					this.frame.setVisible(true);				
+					status.append("Error Connecting");				
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -323,14 +288,7 @@ public class Customer extends JPanel implements ActionListener{
 				} // finally
 			} //end if text field is not empty
 			else{
-				this.error = new TextField("Error Connecting");
-				error.setEditable(false);
-				this.frame.remove(this.amount);
-				this.frame.remove(this.submit);				
-				this.frame.add(error);
-				// Display the window
-				this.frame.pack();
-				this.frame.setVisible(true);		
+				status.append("Error Connecting");
 			}
 		} // end if
 		
@@ -367,25 +325,11 @@ public class Customer extends JPanel implements ActionListener{
 				}
 
 				catch(UnknownHostException unknownHost){
-					this.error = new TextField("Unknown Host");
-					error.setEditable(false);
-					this.frame.remove(this.amount);
-					this.frame.remove(this.submit);				
-					this.frame.add(error);
-					// Display the window
-					this.frame.pack();
-					this.frame.setVisible(true);
+					status.append("Unknown Host");
 				}
 				catch(IOException ioException){
 					ioException.printStackTrace();
-					this.error = new TextField("Error Connecting");
-					error.setEditable(false);
-					this.frame.remove(this.amount);
-					this.frame.remove(this.submit);				
-					this.frame.add(error);
-					// Display the window
-					this.frame.pack();
-					this.frame.setVisible(true);				
+					status.append("Error Connecting");				
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -403,14 +347,7 @@ public class Customer extends JPanel implements ActionListener{
 				} // finally
 			} //end if text field is not empty
 			else{
-				this.error = new TextField("Error Connecting");
-				error.setEditable(false);
-				this.frame.remove(this.amount);
-				this.frame.remove(this.submit);				
-				this.frame.add(error);
-				// Display the window
-				this.frame.pack();
-				this.frame.setVisible(true);		
+				status.append("Error Connecting");		
 			}
 		} // end if
 
