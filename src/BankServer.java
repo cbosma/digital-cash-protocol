@@ -1,9 +1,3 @@
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.TextField;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,15 +19,9 @@ import java.security.SignedObject;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SpringLayout;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  * ===== Requirements =====
@@ -62,14 +50,13 @@ public class BankServer extends Thread{
 	 */
 	static Properties accountProps = new Properties();
 
-	/**
-	 * Randomly Generated Serial Version UID
-	 */
-	private static final long serialVersionUID = 8465685567853888181L;
-
 	@Override
 	public void run() {
 		readProperties();
+		BankInterface.accountNum.setText("Account Number: " + BankServer.accountProps.getProperty("accountNum"));
+		BankInterface.customerBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("customerBalance"));
+		BankInterface.merchAccountNum.setText("Account Number: " + BankServer.accountProps.getProperty("merchAccountNum"));
+		BankInterface.merchantBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("merchantBalance"));
 		setupSockets();
 	}
 
@@ -167,6 +154,8 @@ public class BankServer extends Thread{
 					// Check to see the the Customer has enough money to complete the withdraw
 					if ( currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()) >= 0 ){
 						accountProps.setProperty("customerBalance", String.valueOf((currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()))));
+						BankInterface.accountNum.setText("Account Number: " + BankServer.accountProps.getProperty("accountNum"));
+						BankInterface.customerBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("customerBalance"));
 						System.out.println(String.valueOf((currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()))));
 						System.out.println("Money was removed from Customers Account");
 						BankInterface.status.append("\nMoney was removed from Customers Account");
@@ -205,7 +194,7 @@ public class BankServer extends Thread{
 								Signature sig = Signature.getInstance("DSA");
 								if (signedObject.verify(publicKey, sig)){
 									System.out.println("Bank has checked, and the Banks Signature is good");
-									BankInterface.status.append("\nBank has checked, and the Banks Signature is good");
+									MerchantInterface.status.append("Bank has checked, and the Banks Signature is good");
 								}
 
 							} catch (Exception e) {
@@ -222,6 +211,8 @@ public class BankServer extends Thread{
 							System.out.println("Customer does not have sufficient funds");
 							BankInterface.status.append("\nCustomer does not have sufficient funds");							
 						}
+					} else {
+						connection.close();
 					}
 				}
 				catch(ClassNotFoundException classnot){
