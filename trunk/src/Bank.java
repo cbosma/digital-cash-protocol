@@ -4,6 +4,7 @@ import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.FileInputStream;
@@ -247,6 +248,7 @@ public class Bank extends JPanel implements ActionListener, WindowListener{
 					// Check to see the the Customer has enough money to complete the withdraw
 					if ( currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()) >= 0 ){
 						accountProps.setProperty("customerBalance", String.valueOf((currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()))));
+						System.out.println(String.valueOf((currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()))));
 						System.out.println("Money was removed from Customers Account");
 						status.append("\nMoney was removed from Customers Account");
 
@@ -293,6 +295,12 @@ public class Bank extends JPanel implements ActionListener, WindowListener{
 			KeyPair keypair = keyGen.genKeyPair();
 			PrivateKey privateKey = keypair.getPrivate();
 			PublicKey publicKey = keypair.getPublic();
+			try {
+				writeToFile("publicKey.dat", publicKey);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 
 			Signature sig = Signature.getInstance(privateKey.getAlgorithm());
 			SignedObject signedObject = new SignedObject(ecashToSign, privateKey, sig);
@@ -374,12 +382,34 @@ public class Bank extends JPanel implements ActionListener, WindowListener{
 		}	
 	}
 
+    private static void writeToFile(String filename, Object object) throws Exception {
+        FileOutputStream fos = null;
+        ObjectOutputStream oos = null;
+
+        try {
+            fos = new FileOutputStream(new File(filename));
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(object);
+            oos.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (oos != null) {
+                oos.close();
+            }
+            if (fos != null) {
+                fos.close();
+            }
+        }
+    }
+	
 	@Override
 	public void windowOpened(WindowEvent e) {}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
 		// TODO Write out all files
+		System.out.println("windows closing");
 		try {
 			FileOutputStream out = new FileOutputStream("accountProps");
 			accountProps.store(out, "---No Comment---");
@@ -394,7 +424,9 @@ public class Bank extends JPanel implements ActionListener, WindowListener{
 	}
 
 	@Override
-	public void windowClosed(WindowEvent e) {}
+	public void windowClosed(WindowEvent e) {
+		System.out.println("windows closing2");
+	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {}
