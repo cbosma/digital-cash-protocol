@@ -18,9 +18,6 @@ import java.security.SignatureException;
 import java.security.SignedObject;
 import java.util.Properties;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
