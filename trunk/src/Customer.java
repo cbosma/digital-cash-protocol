@@ -225,20 +225,6 @@ public class Customer extends JPanel implements ActionListener{
 					signedObject = (SignedObject) in.readObject();
 					System.out.println("Signed Money Order Received back from bank");
 					status.append("\nMoney Order Received back from bank");
-
-
-					//					//1. creating a socket to connect to the server
-					//					requestSocket = new Socket("localhost", 2005);
-					//					System.out.println("Connected to localhost in port 2005");
-					//					status.append("Connected to localhost in port 2005");
-					//					//2. get Input and Output streams
-					//					out = new ObjectOutputStream(requestSocket.getOutputStream());
-					//					out.flush();
-					//					// Send the money order array to the bank
-					//					out.writeObject(signedObject);
-					//					out.flush();
-					//					System.out.println("Money Order Sent to the Merchant...");
-					//					status.append("Money Order Sent to the Merchant...");
 				}
 
 				catch(UnknownHostException unknownHost){
