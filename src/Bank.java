@@ -4,6 +4,8 @@ import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -45,7 +47,7 @@ import javax.swing.UIManager;
  *   database file
  * - Appropriate measures against reuse of the ecash
  */
-public class Bank extends JPanel implements ActionListener{
+public class Bank extends JPanel implements ActionListener, WindowListener{
 
 	private static Ecash[] moneyOrderArrayFromCustomer = null; 
 	private static String[] uniqueness = new String[100]; 
@@ -371,5 +373,39 @@ public class Bank extends JPanel implements ActionListener{
 			return false;
 		}	
 	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		// TODO Write out all files
+		try {
+			FileOutputStream out = new FileOutputStream("accountProps");
+			accountProps.store(out, "---No Comment---");
+			out.close();
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {}
+
+	@Override
+	public void windowIconified(WindowEvent e) {}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {}
+
+	@Override
+	public void windowActivated(WindowEvent e) {}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {}
 
 }
