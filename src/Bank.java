@@ -201,8 +201,8 @@ public class Bank extends JPanel implements ActionListener{
 				// Turn off bold fonts
 				UIManager.put("swing.boldMetal", Boolean.FALSE);
 				readProperties();
-				setupSockets();
 				createAndShowGUI();
+				setupSockets();
 
 			}
 		});
