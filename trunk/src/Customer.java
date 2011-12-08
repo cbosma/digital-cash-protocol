@@ -135,7 +135,7 @@ public class Customer extends JPanel implements ActionListener{
 
 		this.frame.setMinimumSize(new Dimension(250, this.frame.getPreferredSize().height));
 		this.frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
-				.getWidth() - this.frame.getSize().width) / 2), 200);
+				.getWidth()/2) - (this.frame.getSize().width*2)), 200);
 
 		JPanel customerPane = new JPanel();
 		customerPane.setLayout(new BoxLayout(customerPane, BoxLayout.PAGE_AXIS));
