@@ -48,7 +48,7 @@ import javax.swing.UIManager;
  *   database file
  * - Appropriate measures against reuse of the ecash
  */
-public class Bank extends JPanel implements ActionListener, WindowListener{
+public class Bank implements ActionListener, WindowListener{
 
 	private static Ecash[] moneyOrderArrayFromCustomer = null; 
 	private static String[] uniqueness = new String[100]; 
@@ -92,7 +92,7 @@ public class Bank extends JPanel implements ActionListener, WindowListener{
 			} catch (FileNotFoundException e2) {
 				// can't create a file
 				e2.printStackTrace();
-				System.exit(ERROR);
+				System.exit(JPanel.ERROR);
 			}
 			try {
 				accountProps.setProperty("customerBalance", "100");
@@ -142,11 +142,12 @@ public class Bank extends JPanel implements ActionListener, WindowListener{
 	/**
 	 * Create the frame to hold the panel.
 	 */
-	public static void createAndShowGUI() {
+	public  void createAndShowGUI() {
 		// Create and set up the window
 		JFrame frame = new JFrame("Bank");
 		frame.setTitle("Bank");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.addWindowListener(this);
 
 		//frame.setMinimumSize(new Dimension(, this.getPreferredSize().height));
 		frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
@@ -204,9 +205,10 @@ public class Bank extends JPanel implements ActionListener, WindowListener{
 			public void run() {
 				// Turn off bold fonts
 				UIManager.put("swing.boldMetal", Boolean.FALSE);
-				readProperties();
-				createAndShowGUI();
-				setupSockets();
+				Bank bank = new Bank();
+				bank.readProperties();
+				bank.createAndShowGUI();
+				bank.setupSockets();
 
 			}
 		});
