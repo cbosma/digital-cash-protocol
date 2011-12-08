@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignedObject;
@@ -52,14 +53,57 @@ public class MerchantServer extends Thread {
 			try{
 				signedObject = (SignedObject) in.readObject();
 				System.out.println("Received a Signed Ecash from the Customer");
+				MerchantInterface.status.append("Received a Signed Ecash from the Customer");
 				PublicKey publicKey;
 				try {
 					publicKey = (PublicKey) readFromFile("publicKey.dat");
 					Signature sig = Signature.getInstance("DSA");
 					if (signedObject.verify(publicKey, sig)){
 						System.out.println("Merchant has checked, and the Banks Signature is good");
+						MerchantInterface.status.append("Merchant has checked, and the Banks Signature is good");
 						EcashFromCustomer = (Ecash) signedObject.getObject();
 						System.out.println("The Ecash received from the customer is good for $" + EcashFromCustomer.getAmount());
+						MerchantInterface.status.append("The Ecash received from the customer is good for $" + EcashFromCustomer.getAmount());
+						
+						ObjectOutputStream bankOut = null;
+						ObjectInputStream bankIn = null;
+						Socket BankrequestSocket = null;
+						try{
+							//1. creating a socket to connect to the bank
+							BankrequestSocket = new Socket("localhost", 2006);
+							BankrequestSocket.setKeepAlive(false);
+							System.out.println("Connected to localhost in port 2006");
+							//2. get Input and Output streams
+							bankOut = new ObjectOutputStream(BankrequestSocket.getOutputStream());
+							bankOut.flush();
+							// Send the signed money order to the bank
+							bankOut.writeObject(signedObject);
+							bankOut.flush();
+							System.out.println("Signed Money Order was sent to Bank for Verification...");
+							MerchantInterface.status.append("Signed Money Order was sent to Bank for Verification...");
+//							bankIn = new ObjectInputStream(BankrequestSocket.getInputStream());
+//							signedObject = (SignedObject) bankIn.readObject();
+//							System.out.println("Signed Money Order Received back from bank");
+//							MerchantInterface.status.append("\nMoney Order Received back from bank");
+						}
+
+						catch(UnknownHostException unknownHost){
+							MerchantInterface.status.append("Unknown Host");
+						}
+						catch(IOException ioException){
+							ioException.printStackTrace();
+						}
+						
+						try {
+							in.close();
+							out.close();
+							BankrequestSocket.close();
+
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+						
+						
 					}
 
 
