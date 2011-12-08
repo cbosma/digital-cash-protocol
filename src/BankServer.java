@@ -193,39 +193,48 @@ public class BankServer extends Thread{
 								Signature sig = Signature.getInstance("DSA");
 								if (signedObject.verify(publicKey, sig)){
 									System.out.println("Bank has checked, and the Banks Signature is good");
-									BankInterface.status.append("Bank has checked, and the Banks Signature is good");
+									BankInterface.status.append("\nBank has checked, and the Banks Signature is good");
 									EcashFromMerchant = (Ecash) signedObject.getObject();
 
-									alreadyUsedUniqueness = ReadWriteCsv.getValues();
-									if(alreadyUsedUniqueness != null){
-										for ( int i = 0; i < alreadyUsedUniqueness.length; i++ ){
-											if (alreadyUsedUniqueness[i].compareTo(EcashFromMerchant.getUniqueness()) == 0){
-												System.out.println("You have already used this Uniqueness ID, you are cheating!");
-												BankInterface.status.append("You have already used this Uniqueness ID, you are cheating!");
-											}
-											else{
-												ReadWriteCsv.writeFile(EcashFromMerchant.getUniqueness());
-												System.out.println("The Uniqueness ID is good!");
-												BankInterface.status.append("The Uniqueness ID is good!");
-												accountProps.setProperty("merchantBalance", String.valueOf((currBalance + (EcashFromMerchant.getAmount()))));
-												BankInterface.merchantBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("merchantBalance"));
-												System.out.println("The money order has been deposited into the merchants account.");
-												BankInterface.status.append("The money order has been deposited into the merchants account.");
-												connection.close();
-												providerSocket.close();
-											}
-										}
+									if ( Customer.BadUniquenessToMerchant == true){
+										EcashFromMerchant.setUniqueness("cbc6e180-995f-4213-a999-14a3dcf42849");
+										System.out.println("You have already used this Uniqueness ID, you are cheating!");
+										BankInterface.status.append("\nYou have already used this Uniqueness ID, you are cheating!");
+
 									}
 									else{
-										ReadWriteCsv.writeFile(EcashFromMerchant.getUniqueness());
-										System.out.println("The Uniqueness ID is good!");
-										BankInterface.status.append("The Uniqueness ID is good!");
-										accountProps.setProperty("merchantBalance", String.valueOf((currBalance + (EcashFromMerchant.getAmount()))));
-										BankInterface.merchantBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("merchantBalance"));
-										System.out.println("The money order has been deposited into the merchants account.");
-										BankInterface.status.append("The money order has been deposited into the merchants account.");
-										connection.close();
-										providerSocket.close();
+										alreadyUsedUniqueness = ReadWriteCsv.getValues();
+										if(alreadyUsedUniqueness != null){
+											for ( int i = 0; i < alreadyUsedUniqueness.length; i++ ){
+												if (alreadyUsedUniqueness[i].compareTo(EcashFromMerchant.getUniqueness()) == 0){
+													System.out.println("You have already used this Uniqueness ID, you are cheating!");
+													BankInterface.status.append("\nYou have already used this Uniqueness ID, you are cheating!");
+												}
+												else{
+													ReadWriteCsv.writeFile(EcashFromMerchant.getUniqueness());
+													System.out.println("The Uniqueness ID is good!");
+													BankInterface.status.append("\nThe Uniqueness ID is good!");
+													accountProps.setProperty("merchantBalance", String.valueOf((currBalance + (EcashFromMerchant.getAmount()))));
+													BankInterface.merchantBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("merchantBalance"));
+													System.out.println("The money order has been deposited into the merchants account.");
+													BankInterface.status.append("\nThe money order has been deposited into the merchants account.");
+													connection.close();
+													providerSocket.close();
+												}
+											}
+										}
+
+										else{
+											ReadWriteCsv.writeFile(EcashFromMerchant.getUniqueness());
+											System.out.println("The Uniqueness ID is good!");
+											BankInterface.status.append("\nThe Uniqueness ID is good!");
+											accountProps.setProperty("merchantBalance", String.valueOf((currBalance + (EcashFromMerchant.getAmount()))));
+											BankInterface.merchantBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("merchantBalance"));
+											System.out.println("The money order has been deposited into the merchants account.");
+											BankInterface.status.append("\nThe money order has been deposited into the merchants account.");
+											connection.close();
+											providerSocket.close();
+										}
 									}
 								}
 							} catch (Exception e) {
