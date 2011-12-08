@@ -401,16 +401,16 @@ public class Customer extends JPanel implements ActionListener{
 				out.flush();
 				System.out.println("Money Order Sent to the Merchant...");
 				status.append("\nMoney Order Sent to the Merchant...");
+				out.close();
+				requestSocket.close();
 			}
-
-			
-			
 			catch(UnknownHostException unknownHost){
 				status.append("Unknown Host");
 			}
 			catch(IOException ioException){
 				ioException.printStackTrace();
 			} //end if text field is not empty
+			
 		} // end if
 	}
 } // end method
