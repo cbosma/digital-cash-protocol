@@ -150,7 +150,7 @@ public class BankServer extends Thread{
 			providerSocket = new ServerSocket(2004, 10);
 			//2. Wait for connection
 			System.out.println("Waiting for connection from Customer...");
-			BankInterface.status.append("Waiting...");
+			BankInterface.status.append("\nWaiting...");
 			Socket connection = providerSocket.accept();
 			System.out.println("Connection received from Customer at " + connection.getInetAddress().getHostName());
 			//3. Get Input Stream

@@ -143,9 +143,8 @@ public class BankInterface extends JFrame implements ActionListener, WindowListe
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("Action Performed, " + e.getActionCommand().toString());
-		status.append("You hit a button");
 		if(e.getActionCommand().equals("openBank")) {
-			status.append("Opening the bank");
+			status.append("\nOpening the bank");
 			startSockets.setText("Close the Bank"); 
 			startSockets.setActionCommand("closeBank");
 			BankServer server = new BankServer();
