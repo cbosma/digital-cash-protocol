@@ -56,6 +56,7 @@ public class Bank extends JPanel implements ActionListener, WindowListener{
 	private static boolean matchingAmounts = true;
 	private static boolean matchingUniqueness = false;
 	private static boolean tmpUniqueness = false;
+	private static SignedObject signedObject;
 
 	/**
 	 * Properties object that holds all account information
@@ -259,10 +260,10 @@ public class Bank extends JPanel implements ActionListener, WindowListener{
 							// Bank hands the blinded money order back to Customer 
 							out = new ObjectOutputStream(connection.getOutputStream());
 							out.flush();
-							out.writeObject(moneyOrderArrayFromCustomer[(moneyOrderArrayFromCustomer.length-1)]);
+							out.writeObject(signedObject);
 							out.flush();
-							System.out.println("Sent Money Order back to Customer");
-							status.append("\nSent Money Order back to Customer");
+							System.out.println("Sent Signed Money Order back to Customer");
+							status.append("\nSent Signed Money Order back to Customer");
 						}
 						else{
 							System.out.println("Bank could not sign the Money Order");
@@ -303,7 +304,7 @@ public class Bank extends JPanel implements ActionListener, WindowListener{
 
 
 			Signature sig = Signature.getInstance(privateKey.getAlgorithm());
-			SignedObject signedObject = new SignedObject(ecashToSign, privateKey, sig);
+			signedObject = new SignedObject(ecashToSign, privateKey, sig);
 			sig = Signature.getInstance(publicKey.getAlgorithm());
 			if ( signedObject.verify(publicKey, sig) ){
 				return true;
