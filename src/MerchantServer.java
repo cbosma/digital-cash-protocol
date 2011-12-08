@@ -53,17 +53,17 @@ public class MerchantServer extends Thread {
 			try{
 				signedObject = (SignedObject) in.readObject();
 				System.out.println("Received a Signed Ecash from the Customer");
-				MerchantInterface.status.append("Received a Signed Ecash from the Customer");
+				MerchantInterface.status.append("\nReceived a Signed Ecash from the Customer");
 				PublicKey publicKey;
 				try {
 					publicKey = (PublicKey) readFromFile("publicKey.dat");
 					Signature sig = Signature.getInstance("DSA");
 					if (signedObject.verify(publicKey, sig)){
-						System.out.println("Merchant has checked, and the Banks Signature is good");
+						System.out.println("\nMerchant has checked, and the Banks Signature is good");
 						MerchantInterface.status.append("Merchant has checked, and the Banks Signature is good");
 						EcashFromCustomer = (Ecash) signedObject.getObject();
 						System.out.println("The Ecash received from the customer is good for $" + EcashFromCustomer.getAmount());
-						MerchantInterface.status.append("The Ecash received from the customer is good for $" + EcashFromCustomer.getAmount());
+						MerchantInterface.status.append("\nThe Ecash received from the customer is good for $" + EcashFromCustomer.getAmount());
 						
 						ObjectOutputStream bankOut = null;
 						ObjectInputStream bankIn = null;
@@ -80,7 +80,7 @@ public class MerchantServer extends Thread {
 							bankOut.writeObject(signedObject);
 							bankOut.flush();
 							System.out.println("Signed Money Order was sent to Bank for Verification...");
-							MerchantInterface.status.append("Signed Money Order was sent to Bank for Verification...");
+							MerchantInterface.status.append("\nSigned Money Order was sent to Bank for Verification...");
 //							bankIn = new ObjectInputStream(BankrequestSocket.getInputStream());
 //							signedObject = (SignedObject) bankIn.readObject();
 //							System.out.println("Signed Money Order Received back from bank");
