@@ -286,6 +286,10 @@ public class Bank implements ActionListener, WindowListener{
 							out.flush();
 							System.out.println("Sent Signed Money Order back to Customer");
 							status.append("\nSent Signed Money Order back to Customer");
+							in.close();
+							out.close();
+							connection.close();
+							providerSocket.close();
 						}
 						else{
 							System.out.println("Bank could not sign the Money Order");
