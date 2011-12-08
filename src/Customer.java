@@ -46,11 +46,12 @@ public class Customer extends JPanel implements ActionListener{
 	private JButton badUniqunessTest = null;
 	private JButton submit = null;
 	private TextField amount = null;
+	private JButton sendToMerchant = null;
 	private TextField error = null;
 	private JTextArea status = new JTextArea();
 	private static SignedObject signedObject;
 
-	
+
 	private Double transationAmount = null;
 	private int numMoneyOrders = 100;
 	private String testIdentity = "test";
@@ -63,46 +64,46 @@ public class Customer extends JPanel implements ActionListener{
 
 	public static String generateKey(String M) {
 		String key = "";
-		
+
 		// Generate key, a random string of 1's and 0's with the same length as the the message, M
 		for (int i = 0; i < M.length(); i++) {
 			Random randomGenerator = new Random();
 			int randomInt = randomGenerator.nextInt(2);
 			key += randomInt;
 		}
-		
+
 		return key;
 	}
-	
+
 	public static String commitment(String bit) {
 		String b = bit;
 		String P = "";
-		
+
 		// Generate P, a random string of 1's and 0's with the same length as the bit to be committed
 		for (int i = 0; i < b.length(); i++) {
 			Random randomGenerator = new Random();
 			int randomInt = randomGenerator.nextInt(2);
 			P += randomInt;
 		}
-		
+
 		// Put P & b in a hash function to generate h
 		return (P.hashCode() ^ b.hashCode()) + "";
 	}
-	
+
 	public static void splitIdentity() {
 		// Convert the message to 1's and 0's
 		String M = name + " " + address + " " + phone;
 		M = new BigInteger(M.getBytes()).toString(2);
-		
+
 		// Generate the key, L
 		String L = generateKey(M);
-		
+
 		// XOR M and L to get R
 		String R = "";
 		for (int i = 0; i < M.length() && i < L.length(); i++) {
 			R += M.charAt(i) ^ L.charAt(i);
 		}
-		
+
 		System.out.println(commitment (L));
 		System.out.println(commitment (R));
 	}
@@ -134,7 +135,7 @@ public class Customer extends JPanel implements ActionListener{
 		customerPane.add(new JLabel("Address: " + Customer.address));
 		customerPane.add(new JLabel("Phone: " + Customer.phone));
 		this.add(customerPane);
-		
+
 		JPanel bankPane = new JPanel();
 		bankPane.setLayout(new BoxLayout(bankPane, BoxLayout.PAGE_AXIS));
 		bankPane.setBorder(BorderFactory.createTitledBorder("New Bank Transaction"));
@@ -164,21 +165,27 @@ public class Customer extends JPanel implements ActionListener{
 		bankPane.add(badUniqunessTest);
 
 		this.add(bankPane);
-		
+
 		JPanel merchantPane = new JPanel();
 		merchantPane.setLayout(new BoxLayout(merchantPane, BoxLayout.PAGE_AXIS));
 		merchantPane.setBorder(BorderFactory.createTitledBorder("Merchant Transactions"));
-		// TODO Add merchant stuff
+		this.sendToMerchant = new JButton("Send Money to Merchant");
+		this.sendToMerchant.addActionListener(this);
+		this.sendToMerchant.setActionCommand("sendToMerchant");
+		this.sendToMerchant.setToolTipText("Send Money to Merchant");
+		this.sendToMerchant.addActionListener(this);
+		merchantPane.add(sendToMerchant);
+
 		merchantPane.add(new JLabel("Transactions with the merchant go here!!!"));
 		this.add(merchantPane);
-		
+
 		this.status = new JTextArea(5, 20);
 		JScrollPane scrollPane = new JScrollPane(this.status);
 		scrollPane.setSize(500, 100);
 		this.status.setEditable(false);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
 		this.frame.add(scrollPane);
-		
+
 		// Display the window
 		this.frame.pack();
 		this.frame.setVisible(true);
@@ -204,6 +211,7 @@ public class Customer extends JPanel implements ActionListener{
 				try{
 					//1. creating a socket to connect to the server
 					requestSocket = new Socket("localhost", 2004);
+					requestSocket.setKeepAlive(false);
 					System.out.println("Connected to localhost in port 2004");
 					//2. get Input and Output streams
 					out = new ObjectOutputStream(requestSocket.getOutputStream());
@@ -216,19 +224,21 @@ public class Customer extends JPanel implements ActionListener{
 					in = new ObjectInputStream(requestSocket.getInputStream());
 					signedObject = (SignedObject) in.readObject();
 					System.out.println("Signed Money Order Received back from bank");
-					status.append("Money Order Received back from bank");
-					//1. creating a socket to connect to the server
-					requestSocket = new Socket("localhost", 2005);
-					System.out.println("Connected to localhost in port 2005");
-					status.append("Connected to localhost in port 2005");
-					//2. get Input and Output streams
-					out = new ObjectOutputStream(requestSocket.getOutputStream());
-					out.flush();
-					// Send the money order array to the bank
-					out.writeObject(signedObject);
-					out.flush();
-					System.out.println("Money Order Sent to the Merchant...");
-					status.append("Money Order Sent to the Merchant...");
+					status.append("\nMoney Order Received back from bank");
+
+
+					//					//1. creating a socket to connect to the server
+					//					requestSocket = new Socket("localhost", 2005);
+					//					System.out.println("Connected to localhost in port 2005");
+					//					status.append("Connected to localhost in port 2005");
+					//					//2. get Input and Output streams
+					//					out = new ObjectOutputStream(requestSocket.getOutputStream());
+					//					out.flush();
+					//					// Send the money order array to the bank
+					//					out.writeObject(signedObject);
+					//					out.flush();
+					//					System.out.println("Money Order Sent to the Merchant...");
+					//					status.append("Money Order Sent to the Merchant...");
 				}
 
 				catch(UnknownHostException unknownHost){
@@ -236,26 +246,23 @@ public class Customer extends JPanel implements ActionListener{
 				}
 				catch(IOException ioException){
 					ioException.printStackTrace();
-					status.append("Error Connecting");				
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				finally{
-					//4: Closing connection
-					try{
-						in.close();
-						out.close();
-						requestSocket.close();
-						System.exit(0);
-					}
-					catch(IOException ioException){
-						ioException.printStackTrace();
-					}
-				} // finally
+				
+				try {
+					in.close();
+					out.close();
+					requestSocket.close();
+
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
 			} //end if text field is not empty
 			else{
-				status.append("Error Connecting");		
+				status.append("No Amount Entered for Money Order");		
 			}
 		} // end if
 
@@ -307,7 +314,6 @@ public class Customer extends JPanel implements ActionListener{
 						in.close();
 						out.close();
 						requestSocket.close();
-						System.exit(0);
 					}
 					catch(IOException ioException){
 						ioException.printStackTrace();
@@ -318,7 +324,7 @@ public class Customer extends JPanel implements ActionListener{
 				status.append("Error Connecting");
 			}
 		} // end if
-		
+
 		if(e.getActionCommand().equals("badUniquness")) {
 
 			// If the amount TextField has data, try to make the connection
@@ -378,8 +384,34 @@ public class Customer extends JPanel implements ActionListener{
 			}
 		} // end if
 
-		
-		
+		if(e.getActionCommand().equals("sendToMerchant")) {
+
+			ObjectOutputStream out = null;
+			ObjectInputStream in = null;
+			Socket requestSocket = null;
+			try{
+				//1. creating a socket to connect to the server
+				requestSocket = new Socket("localhost", 2005);
+				System.out.println("Connected to localhost in port 2005");
+				//2. get Input and Output streams
+				out = new ObjectOutputStream(requestSocket.getOutputStream());
+				out.flush();
+				// Send the money order array to the bank
+				out.writeObject(signedObject);
+				out.flush();
+				System.out.println("Money Order Sent to the Merchant...");
+				status.append("\nMoney Order Sent to the Merchant...");
+			}
+
+			
+			
+			catch(UnknownHostException unknownHost){
+				status.append("Unknown Host");
+			}
+			catch(IOException ioException){
+				ioException.printStackTrace();
+			} //end if text field is not empty
+		} // end if
 	}
 } // end method
 
