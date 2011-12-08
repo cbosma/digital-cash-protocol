@@ -54,7 +54,7 @@ public class MerchantInterface extends JFrame implements ActionListener{
 
 		setMinimumSize(new Dimension(500, getPreferredSize().height));
 		setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
-				.getWidth() - getSize().width) / 2), 200);
+				.getWidth()) / 2), 400);
 
 		JPanel panel = (JPanel) this.getContentPane();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));

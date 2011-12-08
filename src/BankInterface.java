@@ -78,7 +78,7 @@ public class BankInterface extends JFrame implements ActionListener, WindowListe
 
 		setMinimumSize(new Dimension(500, getPreferredSize().height));
 		setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
-				.getWidth() - getSize().width) / 2), 200);
+				.getWidth()) / 2), 200);
 
 		Container contentPane = getContentPane();
 		contentPane.setMinimumSize(new Dimension(400, getPreferredSize().height));
