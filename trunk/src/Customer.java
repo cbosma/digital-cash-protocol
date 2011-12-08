@@ -132,7 +132,6 @@ public class Customer extends JPanel implements ActionListener{
 		amount = new TextField();
 		amount.setText("Money Order Amount:");
 		transactionPane.add(amount);
-		this.add(transactionPane);
 
 		this.submit = new JButton("Submit Money Order");
 		this.submit.addActionListener(this);
@@ -155,10 +154,13 @@ public class Customer extends JPanel implements ActionListener{
 		this.badUniqunessTest.addActionListener(this);
 		transactionPane.add(badUniqunessTest);
 
+		this.add(transactionPane);
+		
 		this.status = new JTextArea(5, 20);
 		JScrollPane scrollPane = new JScrollPane(this.status);
 		scrollPane.setSize(500, 100);
 		this.status.setEditable(false);
+		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
 		this.frame.add(scrollPane);
 		
 		// Display the window
