@@ -27,6 +27,7 @@ import java.security.SignedObject;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -64,12 +65,14 @@ public class Bank implements ActionListener, WindowListener{
 	private static Properties accountProps = new Properties();
 
 	private static JTextArea status = new JTextArea();
-
+	private JButton startSockets;
+	
 	/**
 	 * Randomly Generated Serial Version UID
 	 */
 	private static final long serialVersionUID = 8465685567853888181L;
-
+	
+	private static Bank bank = new Bank();
 
 	/**
 	 * Open the properties file, generate a default if it doesn't exist.
@@ -80,7 +83,7 @@ public class Bank implements ActionListener, WindowListener{
 	 * customerBalance = [some integer]
 	 * merchantBalance = [some integer]
 	 */
-	private static void readProperties() {
+	private void readProperties() {
 		FileInputStream in = null;
 		FileOutputStream out = null;
 		try {
@@ -161,6 +164,11 @@ public class Bank implements ActionListener, WindowListener{
 
 		JLabel title = new JLabel("The Bank");
 		contentPane.add(title);
+		
+		startSockets = new JButton("Open the Bank");
+		startSockets.setActionCommand("openBank");
+		startSockets.addActionListener(this);
+		contentPane.add(startSockets);
 
 		TextField accountNum = new TextField();
 		accountNum.setText("Account Number:" + accountProps.getProperty("accountNum"));
@@ -183,7 +191,8 @@ public class Bank implements ActionListener, WindowListener{
 		// bind the top of the title to the top of the content pane
 		layout.putConstraint(SpringLayout.NORTH, title, 0, SpringLayout.NORTH, contentPane);
 		layout.putConstraint(SpringLayout.WEST, title, 0, SpringLayout.WEST, contentPane);
-		layout.putConstraint(SpringLayout.NORTH, accountNum, 0, SpringLayout.SOUTH, title);
+		layout.putConstraint(SpringLayout.WEST, startSockets, 5, SpringLayout.EAST, title);
+		layout.putConstraint(SpringLayout.NORTH, accountNum, 10, SpringLayout.SOUTH, title);
 		layout.putConstraint(SpringLayout.NORTH, customerBalance, 0, SpringLayout.SOUTH, accountNum);
 		// bind the bottom of the scrollpane to the bottom of the content pane
 		layout.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.SOUTH, customerBalance);
@@ -205,10 +214,9 @@ public class Bank implements ActionListener, WindowListener{
 			public void run() {
 				// Turn off bold fonts
 				UIManager.put("swing.boldMetal", Boolean.FALSE);
-				Bank bank = new Bank();
 				bank.readProperties();
 				bank.createAndShowGUI();
-				bank.setupSockets();
+//				bank.setupSockets();
 
 			}
 		});
@@ -222,10 +230,22 @@ public class Bank implements ActionListener, WindowListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("Action!!!!");
+		System.out.println("Action Performed, " + e.getActionCommand().toString());
+		status.append("You hit a button");
+		if(e.getActionCommand().equals("openBank")) {
+			status.append("Opening the bank");
+			startSockets.setText("Close the Bank"); 
+			startSockets.setActionCommand("closeBank");
+			bank.setupSockets();
+		} else if (e.getActionCommand().equals("closeBank")) {
+			status.append("Closing the bank");
+			startSockets.setText("Close the Bank");
+			System.exit(0);
+		}
+		
 	}
 
-	private static void setupSockets() {
+	private void setupSockets() {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 		ServerSocket providerSocket = null;
