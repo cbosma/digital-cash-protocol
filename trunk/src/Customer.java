@@ -135,35 +135,35 @@ public class Customer extends JPanel implements ActionListener{
 		customerPane.add(new JLabel("Phone: " + Customer.phone));
 		this.add(customerPane);
 		
-		JPanel transactionPane = new JPanel();
-		transactionPane.setLayout(new BoxLayout(transactionPane, BoxLayout.PAGE_AXIS));
-		transactionPane.setBorder(BorderFactory.createTitledBorder("New Bank Transaction"));
+		JPanel bankPane = new JPanel();
+		bankPane.setLayout(new BoxLayout(bankPane, BoxLayout.PAGE_AXIS));
+		bankPane.setBorder(BorderFactory.createTitledBorder("New Bank Transaction"));
 		amount = new TextField();
 		amount.setText("Money Order Amount:");
-		transactionPane.add(amount);
+		bankPane.add(amount);
 
 		this.submit = new JButton("Submit Money Order");
 		this.submit.addActionListener(this);
 		this.submit.setActionCommand("submit");
 		this.submit.setToolTipText("Submit the Money Order");
 		this.submit.addActionListener(this);
-		transactionPane.add(submit);
+		bankPane.add(submit);
 
 		this.badAmountTest = new JButton("Run Bad Amount Test");
 		this.badAmountTest.addActionListener(this);
 		this.badAmountTest.setActionCommand("badAmount");
 		this.badAmountTest.setToolTipText("run bad amount test");
 		this.badAmountTest.addActionListener(this);
-		transactionPane.add(badAmountTest);
+		bankPane.add(badAmountTest);
 
 		this.badUniqunessTest = new JButton("Run Bad Uniquness Test");
 		this.badUniqunessTest.addActionListener(this);
 		this.badUniqunessTest.setActionCommand("badUniquness");
 		this.badUniqunessTest.setToolTipText("run bad uniquness test");
 		this.badUniqunessTest.addActionListener(this);
-		transactionPane.add(badUniqunessTest);
+		bankPane.add(badUniqunessTest);
 
-		this.add(transactionPane);
+		this.add(bankPane);
 		
 		this.status = new JTextArea(5, 20);
 		JScrollPane scrollPane = new JScrollPane(this.status);
@@ -171,6 +171,12 @@ public class Customer extends JPanel implements ActionListener{
 		this.status.setEditable(false);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
 		this.frame.add(scrollPane);
+		
+		JPanel merchantPane = new JPanel();
+		merchantPane.setLayout(new BoxLayout(merchantPane, BoxLayout.PAGE_AXIS));
+		merchantPane.setBorder(BorderFactory.createTitledBorder("Customer Information"));
+		// TODO Add merchant stuff
+		this.add(merchantPane);
 		
 		// Display the window
 		this.frame.pack();
