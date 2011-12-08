@@ -91,12 +91,14 @@ public class Customer extends JPanel implements ActionListener{
 			Pflag = 1;
 		}
 
+//		System.out.println("\n\n\nPrinting P: " + P.toString() + "\n\n\n");
+//		System.out.println("\n\n\nPrinting b: " + b.toString() + "\n\n\n");
 		// Put P & b in a hash function to generate h
 		return (P.hashCode() ^ b.hashCode()) + "";
 	}
 
 	public static void splitIdentity() {
-		for (int i = 0; i < numMoneyOrders-1; i++) {
+		for (int i = 0; i < numMoneyOrders; i++) {
 			// Convert the message to 1's and 0's
 			String M = name + " " + address + " " + phone;
 			M = new BigInteger(M.getBytes()).toString(2);
@@ -110,8 +112,8 @@ public class Customer extends JPanel implements ActionListener{
 				R += M.charAt(j) ^ L.charAt(j);
 			}
 			
-			LandRArray[i][1] = L;
-			LandRArray[i][2] = R;
+			LandRArray[i][0] = L;
+			LandRArray[i][1] = R;
 		}
 	}
 
@@ -210,13 +212,17 @@ public class Customer extends JPanel implements ActionListener{
 				moneyOrderArray = new Ecash[numMoneyOrders];
 				LandRArray = new String[numMoneyOrders][2];
 				
+				status.append("\nGenerating Identity Strings...");
 				splitIdentity();
 				
+				status.append("\nBit-Commitment in progress...");
 				for (int i = 0; i < moneyOrderArray.length; i++) {
 					for (int j = 0; j < LandRArray.length; j++) {
-						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][1]), commitment(LandRArray[j][2]));
+//						System.out.println("MO: " + i + " | L/R: " + j );
+						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][0]), commitment(LandRArray[j][1]));
 					}
 				}
+				status.append("Bit-Commitment complete...");
 
 				ObjectOutputStream out = null;
 				ObjectInputStream in = null;
@@ -277,7 +283,8 @@ public class Customer extends JPanel implements ActionListener{
 				
 				for (int i = 0; i < moneyOrderArray.length; i++) {
 					for (int j = 0; j < LandRArray.length; j++) {
-						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][1]), commitment(LandRArray[j][2]));
+//						System.out.println("MO: " + i + " | L/R: " + j );
+						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][0]), commitment(LandRArray[j][1]));
 					}
 				}
 
@@ -342,7 +349,7 @@ public class Customer extends JPanel implements ActionListener{
 				
 				for (int i = 0; i < moneyOrderArray.length; i++) {
 					for (int j = 0; j < LandRArray.length; j++) {
-						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][1]), commitment(LandRArray[j][2]));
+						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][0]), commitment(LandRArray[j][1]));
 					}
 				}
 				
