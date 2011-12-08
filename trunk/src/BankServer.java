@@ -205,7 +205,7 @@ public class BankServer extends Thread{
 								Signature sig = Signature.getInstance("DSA");
 								if (signedObject.verify(publicKey, sig)){
 									System.out.println("Bank has checked, and the Banks Signature is good");
-									MerchantInterface.status.append("Bank has checked, and the Banks Signature is good");
+									BankInterface.status.append("\nBank has checked, and the Banks Signature is good");
 								}
 
 							} catch (Exception e) {
