@@ -179,7 +179,7 @@ public class Customer extends JPanel implements ActionListener{
 	 */
 	public void createAndShowGUI() {
 		// Create and set up the window
-		this.frame.setLayout(new GridLayout(4,1));
+		this.frame.setLayout(new GridLayout(0,1));
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		this.frame.setMinimumSize(new Dimension(250, this.frame.getPreferredSize().height));
