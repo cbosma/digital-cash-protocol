@@ -414,7 +414,7 @@ public class Bank implements ActionListener, WindowListener{
 		// TODO Write out all files
 		System.out.println("windows closing");
 		try {
-			FileOutputStream out = new FileOutputStream("accountPropertiess");
+			FileOutputStream out = new FileOutputStream("accountProperties");
 			accountProps.store(out, "---No Comment---");
 			out.close();
 		} catch (FileNotFoundException e1) {
