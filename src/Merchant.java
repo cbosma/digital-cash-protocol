@@ -3,12 +3,17 @@ import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignedObject;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -21,8 +26,10 @@ import javax.swing.JPanel;
  */
 public class Merchant extends JPanel implements ActionListener{
 
-	
+
 	private Ecash EcashFromCustomer = null;
+	private static SignedObject signedObject;
+
 	/**
 	 * Randomly Generated Serial Version UID
 	 */
@@ -67,17 +74,22 @@ public class Merchant extends JPanel implements ActionListener{
 			in = new ObjectInputStream(connection.getInputStream());
 			//4. The two parts communicate via the input and output streams
 			try{
-				EcashFromCustomer = (Ecash) in.readObject();
-				System.out.println("Received Ecash from the Customer");
-				//TODO - Merchant needs to verify the Banks signature
-//				Signature verificationEngine =
-//					     Signature.getInstance(algorithm, provider);
-//					 i f (so.verify(publickey, verificationEngine))
-//					     try {
-//					         Object myobj = so.getObject();
-//					     } catch (java.lang.ClassNotFoundException e) {};
-					 
+				signedObject = (SignedObject) in.readObject();
+				System.out.println("Received a Signed Ecash from the Customer");
+				PublicKey publicKey;
+				try {
+					publicKey = (PublicKey) readFromFile("publicKey.dat");
+					Signature sig = Signature.getInstance("DSA");
+					if (signedObject.verify(publicKey, sig)){
+						System.out.println("Merchant has checked, and the Banks Signature is good");
+						EcashFromCustomer = (Ecash) signedObject.getObject();
+						System.out.println("The Ecash received from the customer is good for $" + EcashFromCustomer.getAmount());
+					}
 
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			catch(ClassNotFoundException classnot){
 				System.err.println("Data received in unknown format");
@@ -95,5 +107,29 @@ public class Merchant extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 	}
+
+	private static Object readFromFile(String filename) throws Exception {
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
+		Object object = null;
+
+		try {
+			fis = new FileInputStream(new File(filename));
+			ois = new ObjectInputStream(fis);
+			object = ois.readObject();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (ois != null) {
+				ois.close();
+			}
+			if (fis != null) {
+				fis.close();
+			}
+		}
+		return object;
+	}
+
+
 
 }
