@@ -205,7 +205,11 @@ public class BankServer extends Thread{
 										else{
 											ReadWriteCsv.writeFile(EcashFromMerchant.getUniqueness());
 											System.out.println("The Uniqueness ID is good!");
-											BankInterface.status.append("The Uniqueness ID is good!");											
+											BankInterface.status.append("The Uniqueness ID is good!");
+											accountProps.setProperty("merchantBalance", String.valueOf((currBalance + (EcashFromMerchant.getAmount()))));
+											BankInterface.merchantBalance.setText("Account Balance: " + BankServer.accountProps.getProperty("merchantBalance"));
+											System.out.println("The money order has been deposited into the merchants account.");
+											BankInterface.status.append("The money order has been deposited into the merchants account.");
 										}
 									}
 								}
