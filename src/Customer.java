@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 import java.security.SignedObject;
 import java.util.Random;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -125,30 +126,34 @@ public class Customer extends JPanel implements ActionListener{
 		this.frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
 				.getWidth() - this.frame.getSize().width) / 2), 200);
 
+		JPanel transactionPane = new JPanel();
+		transactionPane.setLayout(new BoxLayout(transactionPane, BoxLayout.PAGE_AXIS));
+		transactionPane.setBorder(BorderFactory.createTitledBorder("New Bank Transaction"));
 		amount = new TextField();
 		amount.setText("Money Order Amount:");
-		this.frame.add(amount);
+		transactionPane.add(amount);
+		this.add(transactionPane);
 
 		this.submit = new JButton("Submit Money Order");
 		this.submit.addActionListener(this);
 		this.submit.setActionCommand("submit");
 		this.submit.setToolTipText("Submit the Money Order");
 		this.submit.addActionListener(this);
-		this.frame.add(submit);
+		transactionPane.add(submit);
 
 		this.badAmountTest = new JButton("Run Bad Amount Test");
 		this.badAmountTest.addActionListener(this);
 		this.badAmountTest.setActionCommand("badAmount");
 		this.badAmountTest.setToolTipText("run bad amount test");
 		this.badAmountTest.addActionListener(this);
-		this.frame.add(badAmountTest);
+		transactionPane.add(badAmountTest);
 
 		this.badUniqunessTest = new JButton("Run Bad Uniquness Test");
 		this.badUniqunessTest.addActionListener(this);
 		this.badUniqunessTest.setActionCommand("badUniquness");
 		this.badUniqunessTest.setToolTipText("run bad uniquness test");
 		this.badUniqunessTest.addActionListener(this);
-		this.frame.add(badUniqunessTest);
+		transactionPane.add(badUniqunessTest);
 
 		this.status = new JTextArea(5, 20);
 		JScrollPane scrollPane = new JScrollPane(this.status);
