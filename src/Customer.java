@@ -46,37 +46,125 @@ public class Customer extends JPanel implements ActionListener{
 	private String testIdentity = "test";
 	private Ecash[] moneyOrderArray = null;
 
-	// Constants
+	// Constant Identity Information
 	private static final String name = "Alice";
 	private static final String address = "8000 York Road Towson Maryland 21252";
 	private static final String phone = "410-704-2000";
 	private static final String email = "alice@towson.edu";
 	private static final String ssn = "123456789";
 
-	public void splitIdentity() {
-		System.out.println(name);
-
-		String binary = new BigInteger(name.getBytes()).toString(2);
-		System.out.println(binary);
-
+	public static String generateKey(String M) {
 		String key = "";
-		for (int i = 0; i < binary.length(); i++) {
+		
+		// Generate key, a random string of 1's and 0's with the same length as the the message, M
+		for (int i = 0; i < M.length(); i++) {
 			Random randomGenerator = new Random();
 			int randomInt = randomGenerator.nextInt(2);
 			key += randomInt;
 		}
-		System.out.println(key);
-
-		String temp = "";
-		for (int i = 0; i < binary.length() && i < key.length(); i++) {
-			temp += binary.charAt(i) ^ key.charAt(i);
+		
+		return key;
+	}
+	
+	public static String commitment(String bit) {
+		String b = bit;
+		String P = "";
+		
+		// Generate P, a random string of 1's and 0's with the same length as the bit to be committed
+		for (int i = 0; i < b.length(); i++) {
+			Random randomGenerator = new Random();
+			int randomInt = randomGenerator.nextInt(2);
+			P += randomInt;
 		}
-		System.out.println(temp);
-
-		/*
-		String text2 = new String(new BigInteger(binary, 2).toByteArray());
-		System.out.println(text2);
-		 */
+		
+		// Put P & b in a hash function to generate h
+		return (P.hashCode() ^ b.hashCode()) + "";
+	}
+	
+	public static void splitIdentity() {
+		String M = "";
+		String L = "";
+		String R = "";
+		
+		// Name
+		// Convert the message to 1's and 0's
+		M = new BigInteger(name.getBytes()).toString(2);
+		
+		// Generate the key, L
+		L = generateKey(M);
+		
+		// XOR M and L to get R
+		R = "";
+		for (int i = 0; i < M.length() && i < L.length(); i++) {
+			R += M.charAt(i) ^ L.charAt(i);
+		}
+		
+		System.out.println(commitment (L));
+		System.out.println(commitment (R));
+		
+		// Address
+		// Convert the message to 1's and 0's
+		M = new BigInteger(address.getBytes()).toString(2);
+		
+		// Generate the key, L
+		L = generateKey(M);
+		
+		// XOR M and L to get R
+		R = "";
+		for (int i = 0; i < M.length() && i < L.length(); i++) {
+			R += M.charAt(i) ^ L.charAt(i);
+		}
+		
+		System.out.println(commitment (L));
+		System.out.println(commitment (R));
+		
+		// Phone
+		// Convert the message to 1's and 0's
+		M = new BigInteger(phone.getBytes()).toString(2);
+		
+		// Generate the key, L
+		L = generateKey(M);
+		
+		// XOR M and L to get R
+		R = "";
+		for (int i = 0; i < M.length() && i < L.length(); i++) {
+			R += M.charAt(i) ^ L.charAt(i);
+		}
+		
+		System.out.println(commitment (L));
+		System.out.println(commitment (R));
+		
+		// Email
+		// Convert the message to 1's and 0's
+		M = new BigInteger(email.getBytes()).toString(2);
+		
+		// Generate the key, L
+		L = generateKey(M);
+		
+		// XOR M and L to get R
+		R = "";
+		for (int i = 0; i < M.length() && i < L.length(); i++) {
+			R += M.charAt(i) ^ L.charAt(i);
+		}
+		
+		System.out.println(commitment (L));
+		System.out.println(commitment (R));
+		
+		// SSN
+		// Convert the message to 1's and 0's
+		M = new BigInteger(ssn.getBytes()).toString(2);
+		
+		// Generate the key, L
+		L = generateKey(M);
+		
+		// XOR M and L to get R
+		R = "";
+		for (int i = 0; i < M.length() && i < L.length(); i++) {
+			R += M.charAt(i) ^ L.charAt(i);
+		}
+		
+		System.out.println(commitment (L));
+		System.out.println(commitment (R));
 	}
 
 	/**
@@ -90,7 +178,6 @@ public class Customer extends JPanel implements ActionListener{
 	 * Create the frame to hold the panel.
 	 */
 	public void createAndShowGUI() {
-		splitIdentity();
 		// Create and set up the window
 		this.frame.setLayout(new GridLayout(2,1));
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
