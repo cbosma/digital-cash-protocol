@@ -83,7 +83,7 @@ public class Customer extends JPanel implements ActionListener{
 		// Convert the message to 1's and 0's
 		String M = name + " " + address + " " + phone;
 		System.out.println(M);
-		M = new BigInteger(name.getBytes()).toString(2);
+		M = new BigInteger(M.getBytes()).toString(2);
 		
 		// Generate the key, L
 		String L = generateKey(M);
