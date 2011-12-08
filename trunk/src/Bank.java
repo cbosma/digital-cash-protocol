@@ -249,13 +249,14 @@ public class Bank implements ActionListener, WindowListener{
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 		ServerSocket providerSocket = null;
+		Socket connection = null;
 		try {
 			//1. creating a server socket
 			providerSocket = new ServerSocket(2004, 10);
 			//2. Wait for connection
 			System.out.println("Waiting for connection from Customer...");
 			status.append("Waiting...");
-			Socket connection = providerSocket.accept();
+			connection = providerSocket.accept();
 			System.out.println("Connection received from Customer at " + connection.getInetAddress().getHostName());
 			//3. Get Input Stream
 			in = new ObjectInputStream(connection.getInputStream());
@@ -286,10 +287,6 @@ public class Bank implements ActionListener, WindowListener{
 							out.flush();
 							System.out.println("Sent Signed Money Order back to Customer");
 							status.append("\nSent Signed Money Order back to Customer");
-							in.close();
-							out.close();
-							connection.close();
-							providerSocket.close();
 						}
 						else{
 							System.out.println("Bank could not sign the Money Order");
@@ -311,6 +308,16 @@ public class Bank implements ActionListener, WindowListener{
 			System.out.println("Error With Socket Connection");
 			ioException.printStackTrace();
 		}
+		
+		try {
+			in.close();
+			out.close();
+			connection.close();
+			providerSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public static Boolean signMoneyOrder(Ecash ecashToSign){
