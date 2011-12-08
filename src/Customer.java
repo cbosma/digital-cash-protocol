@@ -15,6 +15,8 @@ import java.util.Random;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**
  * ===== Requirements =====
@@ -41,6 +43,9 @@ public class Customer extends JPanel implements ActionListener{
 	private JButton submit = null;
 	private TextField amount = null;
 	private TextField error = null;
+	private JTextArea status = new JTextArea();
+	
+	
 	private Double transationAmount = null;
 	private int numMoneyOrders = 100;
 	private String testIdentity = "test";
@@ -141,6 +146,12 @@ public class Customer extends JPanel implements ActionListener{
 		this.badUniqunessTest.addActionListener(this);
 		this.frame.add(badUniqunessTest);
 
+		this.status = new JTextArea(5, 20);
+		JScrollPane scrollPane = new JScrollPane(this.status);
+		scrollPane.setSize(500, 100);
+		this.status.setEditable(false);
+		this.frame.add(scrollPane);
+		
 		// Display the window
 		this.frame.pack();
 		this.frame.setVisible(true);
