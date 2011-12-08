@@ -55,7 +55,12 @@ public class BankInterface extends JFrame implements ActionListener, WindowListe
 	static JTextArea status = new JTextArea();
 	private JButton startSockets;
 	private BankServer server;
-
+	
+	static JLabel merchAccountNum;
+	static JLabel merchantBalance;
+	static JLabel accountNum;
+	static JLabel customerBalance;
+	
 	/**
 	 * Randomly Generated Serial Version UID
 	 */
@@ -97,10 +102,10 @@ public class BankInterface extends JFrame implements ActionListener, WindowListe
 		JPanel customerPane = new JPanel();
 		customerPane.setLayout(new BoxLayout(customerPane, BoxLayout.PAGE_AXIS));
 		customerPane.setBorder(BorderFactory.createTitledBorder("Customer Account"));
-		JLabel accountNum = new JLabel();
-		accountNum.setText("Account Number:" + BankServer.accountProps.getProperty("accountNum"));
-		JLabel customerBalance = new JLabel();
-		customerBalance.setText("Account Balance:" + BankServer.accountProps.getProperty("customerBalance"));
+		accountNum = new JLabel();
+		accountNum.setText("Account Number: --");
+		customerBalance = new JLabel();
+		customerBalance.setText("Account Balance: --");
 		customerPane.add(accountNum);
 		customerPane.add(customerBalance);
 		accountPane.add(customerPane);
@@ -108,10 +113,10 @@ public class BankInterface extends JFrame implements ActionListener, WindowListe
 		JPanel merchantPane = new JPanel();
 		merchantPane.setLayout(new BoxLayout(merchantPane, BoxLayout.PAGE_AXIS));
 		merchantPane.setBorder(BorderFactory.createTitledBorder("Merchant Account"));
-		JLabel merchAccountNum = new JLabel();
-		merchAccountNum.setText("Account Number:" + BankServer.accountProps.getProperty("merchAccountNum"));
-		JLabel merchantBalance = new JLabel();
-		merchantBalance.setText("Account Balance:" + BankServer.accountProps.getProperty("merchantBalance"));
+		merchAccountNum = new JLabel();
+		merchAccountNum.setText("Account Number: --");
+		merchantBalance = new JLabel();
+		merchantBalance.setText("Account Balance: --");
 		merchantPane.add(merchAccountNum);
 		merchantPane.add(merchantBalance);
 		accountPane.add(merchantPane);
