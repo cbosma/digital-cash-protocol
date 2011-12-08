@@ -245,7 +245,7 @@ public class Customer extends JPanel implements ActionListener{
 					out.writeObject(moneyOrderArray);
 					out.flush();
 					System.out.println("Money Order Array Sent to the Bank...");
-					status.append("Money Order Array Sent to the Bank...");
+					status.append("\nMoney Order Array Sent to the Bank...");
 					in = new ObjectInputStream(requestSocket.getInputStream());
 					signedObject = (SignedObject) in.readObject();
 					System.out.println("Signed Money Order Received back from bank");
