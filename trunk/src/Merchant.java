@@ -15,8 +15,11 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignedObject;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**
  * ===== Requirements =====
@@ -30,6 +33,8 @@ public class Merchant extends JPanel implements ActionListener{
 	private Ecash EcashFromCustomer = null;
 	private static SignedObject signedObject;
 
+	private JTextArea status = new JTextArea();
+	
 	/**
 	 * Randomly Generated Serial Version UID
 	 */
@@ -50,9 +55,16 @@ public class Merchant extends JPanel implements ActionListener{
 		JFrame frame = new JFrame("Merchant");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		frame.setMinimumSize(new Dimension(250, frame.getPreferredSize().height));
+		frame.setMinimumSize(new Dimension(500, frame.getPreferredSize().height));
 		frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
 				.getWidth() - frame.getSize().width) / 2), 200);
+		
+		this.status = new JTextArea(5, 20);
+		JScrollPane scrollPane = new JScrollPane(this.status);
+		scrollPane.setSize(500, 100);
+		this.status.setEditable(false);
+		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
+		frame.add(scrollPane);
 
 		// Display the window
 		frame.pack();
