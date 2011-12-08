@@ -83,7 +83,7 @@ public class MerchantServer extends Thread {
 					Signature sig = Signature.getInstance("DSA");
 					if (signedObject.verify(publicKey, sig)){
 						System.out.println("\nMerchant has checked, and the Banks Signature is good");
-						MerchantInterface.status.append("Merchant has checked, and the Banks Signature is good");
+						MerchantInterface.status.append("\nMerchant has checked, and the Banks Signature is good");
 						EcashFromCustomer = (Ecash) signedObject.getObject();
 						System.out.println("The Ecash received from the customer is good for $" + EcashFromCustomer.getAmount());
 						MerchantInterface.status.append("\nThe Ecash received from the customer is good for $" + EcashFromCustomer.getAmount());
@@ -119,7 +119,6 @@ public class MerchantServer extends Thread {
 						
 						try {
 							in.close();
-							out.close();
 							BankrequestSocket.close();
 
 						} catch (IOException e1) {
