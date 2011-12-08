@@ -41,6 +41,8 @@ public class BankServer extends Thread{
 	private static boolean matchingUniqueness = false;
 	private static boolean tmpUniqueness = false;
 	private static SignedObject signedObject;
+	private static String[] alreadyUsedUniqueness;
+	private Ecash EcashFromMerchant;
 
 	/**
 	 * Properties object that holds all account information
@@ -192,6 +194,20 @@ public class BankServer extends Thread{
 								if (signedObject.verify(publicKey, sig)){
 									System.out.println("Bank has checked, and the Banks Signature is good");
 									MerchantInterface.status.append("Bank has checked, and the Banks Signature is good");
+									EcashFromMerchant = (Ecash) signedObject.getObject();
+									
+									alreadyUsedUniqueness = ReadWriteCsv.getValues();
+									for ( int i = 0; i < alreadyUsedUniqueness.length; i++ ){
+										if (alreadyUsedUniqueness[i].compareTo(EcashFromMerchant.getUniqueness()) == 0){
+											System.out.println("You have already used this Uniqueness ID, you are cheating!");
+											BankInterface.status.append("You have already used this Uniqueness ID, you are cheating!");
+										}
+										else{
+											ReadWriteCsv.writeFile(EcashFromMerchant.getUniqueness());
+											System.out.println("The Uniqueness ID is good!");
+											BankInterface.status.append("The Uniqueness ID is good!");											
+										}
+									}
 								}
 
 							} catch (Exception e) {
