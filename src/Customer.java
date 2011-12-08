@@ -82,7 +82,6 @@ public class Customer extends JPanel implements ActionListener{
 	public static void splitIdentity() {
 		// Convert the message to 1's and 0's
 		String M = name + " " + address + " " + phone;
-		System.out.println(M);
 		M = new BigInteger(M.getBytes()).toString(2);
 		
 		// Generate the key, L
