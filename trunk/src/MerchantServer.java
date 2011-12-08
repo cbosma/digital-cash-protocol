@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignedObject;
+import java.util.Random;
 
 /**
  * ===== Requirements =====
@@ -17,10 +18,32 @@ import java.security.SignedObject;
  *   the half of the identity string the customer is required to reveal
  */
 public class MerchantServer extends Thread {
-
-
 	private Ecash EcashFromCustomer = null;
 	private static SignedObject signedObject;
+	
+	public static String generateBitVector() {
+        String bitVector = "";
+
+        int bitVectorLength = 100;
+       
+        for (int i = 0; i < bitVectorLength; i++) {
+            Random randomGenerator = new Random();
+            int randomInt = randomGenerator.nextInt(2);
+            bitVector += randomInt;
+        }
+       
+        for (int i = 0; i < bitVector.length(); i++) {
+            if (bitVector.charAt(i) == '0') {
+                System.out.println("Reveal Right " + i);   
+            }
+           
+            else if (bitVector.charAt(i) == '1') {
+                System.out.println("Reveal Left " + i);
+            }
+        }
+        
+        return bitVector;
+	}
 	
 	/**
 	 * Constructor

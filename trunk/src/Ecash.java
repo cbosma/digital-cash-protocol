@@ -23,13 +23,14 @@ public class Ecash implements Serializable{
 	// TODO - add banks signature
 	// TODO - add identity strings which contain the identity of the customer
 	
-
+	
+	
 	/**
 	 * Constructor for E-Cash
 	 * @param amount - the amount of the money order
 	 * @param identity - identity string to be used for secret splitting
 	 */
-	public Ecash(Double amount, String identity){
+	public Ecash(Double amount, String L, String R){
 		// Create a random string
 		this.amount = amount;
 		this.uniqueness = UUID.randomUUID().toString();
