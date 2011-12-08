@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Random;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -114,7 +115,8 @@ public class Customer extends JPanel implements ActionListener{
 	 */
 	public void createAndShowGUI() {
 		// Create and set up the window
-		this.frame.setLayout(new GridLayout(0,1));
+		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		this.frame.setContentPane(this);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		this.frame.setMinimumSize(new Dimension(250, this.frame.getPreferredSize().height));
