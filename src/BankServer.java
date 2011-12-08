@@ -3,10 +3,8 @@ import java.awt.Dimension;
 import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -49,7 +47,7 @@ import javax.swing.UIManager;
  *   database file
  * - Appropriate measures against reuse of the ecash
  */
-public class Bank implements ActionListener, WindowListener{
+public class BankServer extends Thread{
 
 	private static Ecash[] moneyOrderArrayFromCustomer = null; 
 	private static String[] uniqueness = new String[100]; 
@@ -62,18 +60,19 @@ public class Bank implements ActionListener, WindowListener{
 	/**
 	 * Properties object that holds all account information
 	 */
-	private static Properties accountProps = new Properties();
-
-	private static JTextArea status = new JTextArea();
-	private JButton startSockets;
+	static Properties accountProps = new Properties();
 	
 	/**
 	 * Randomly Generated Serial Version UID
 	 */
 	private static final long serialVersionUID = 8465685567853888181L;
-	
-	private static Bank bank = new Bank();
 
+	@Override
+	public void run() {
+		readProperties();
+		setupSockets();
+	}
+	
 	/**
 	 * Open the properties file, generate a default if it doesn't exist.
 	 * The use of default settings is only for functionality proofing,
@@ -142,121 +141,17 @@ public class Bank implements ActionListener, WindowListener{
 
 	}
 
-	/**
-	 * Create the frame to hold the panel.
-	 */
-	public  void createAndShowGUI() {
-		// Create and set up the window
-		JFrame frame = new JFrame("Bank");
-		frame.setTitle("Bank");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.addWindowListener(this);
-
-		frame.setMinimumSize(new Dimension(500, frame.getPreferredSize().height));
-		frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
-				.getWidth() - frame.getSize().width) / 2), 200);
-
-		Container contentPane = frame.getContentPane();
-		contentPane.setMinimumSize(new Dimension(400, frame.getPreferredSize().height));
-		frame.setContentPane(contentPane);
-		SpringLayout layout = new SpringLayout();
-		frame.setLayout(layout);
-
-		JLabel title = new JLabel("The Bank");
-		contentPane.add(title);
-		
-		startSockets = new JButton("Open the Bank");
-		startSockets.setActionCommand("openBank");
-		startSockets.addActionListener(this);
-		contentPane.add(startSockets);
-
-		TextField accountNum = new TextField();
-		accountNum.setText("Account Number:" + accountProps.getProperty("accountNum"));
-		accountNum.setEditable(false);
-		
-		TextField customerBalance = new TextField();
-		customerBalance.setText("Account Balance:" + accountProps.getProperty("customerBalance"));
-		customerBalance.setEditable(false);
-		
-		contentPane.add(accountNum);
-		contentPane.add(customerBalance);
-		
-		status = new JTextArea(5, 20);
-		JScrollPane scrollPane = new JScrollPane(status);
-		scrollPane.setSize(500, 100);
-		status.setEditable(false);
-		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
-		contentPane.add(scrollPane);
-
-		// bind the top of the title to the top of the content pane
-		layout.putConstraint(SpringLayout.NORTH, title, 0, SpringLayout.NORTH, contentPane);
-		layout.putConstraint(SpringLayout.WEST, title, 0, SpringLayout.WEST, contentPane);
-		layout.putConstraint(SpringLayout.WEST, startSockets, 5, SpringLayout.EAST, title);
-		layout.putConstraint(SpringLayout.NORTH, accountNum, 10, SpringLayout.SOUTH, title);
-		layout.putConstraint(SpringLayout.NORTH, customerBalance, 0, SpringLayout.SOUTH, accountNum);
-		// bind the bottom of the scrollpane to the bottom of the content pane
-		layout.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.SOUTH, customerBalance);
-		// bind the bottom right of the content pane to the bottom right of the status window
-		layout.putConstraint(SpringLayout.EAST, contentPane, 0, SpringLayout.EAST, scrollPane);
-		layout.putConstraint(SpringLayout.SOUTH, contentPane, 0, SpringLayout.SOUTH, scrollPane);
-
-		// Display the window
-		frame.pack();
-		frame.setVisible(true);
-
-		status.append("Initialized...");
-	}
-
-	public static void main(String[] args) {
-		// Create and show the application
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				// Turn off bold fonts
-				UIManager.put("swing.boldMetal", Boolean.FALSE);
-				bank.readProperties();
-				bank.createAndShowGUI();
-//				bank.setupSockets();
-
-			}
-		});
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
-//				setupSockets();
-//			}
-//		});
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		System.out.println("Action Performed, " + e.getActionCommand().toString());
-		status.append("You hit a button");
-		if(e.getActionCommand().equals("openBank")) {
-			status.append("Opening the bank");
-			startSockets.setText("Close the Bank"); 
-			startSockets.setActionCommand("closeBank");
-			bank.setupSockets();
-		} else if (e.getActionCommand().equals("closeBank")) {
-			status.append("Closing the bank");
-			startSockets.setText("Close the Bank");
-			System.exit(0);
-		}
-		
-	}
-
 	private void setupSockets() {
 		ObjectOutputStream out = null;
 		ObjectInputStream in = null;
 		ServerSocket providerSocket = null;
-		Socket connection = null;
 		try {
 			//1. creating a server socket
 			providerSocket = new ServerSocket(2004, 10);
 			//2. Wait for connection
 			System.out.println("Waiting for connection from Customer...");
-			status.append("Waiting...");
-			connection = providerSocket.accept();
+			BankInterface.status.append("Waiting...");
+			Socket connection = providerSocket.accept();
 			System.out.println("Connection received from Customer at " + connection.getInetAddress().getHostName());
 			//3. Get Input Stream
 			in = new ObjectInputStream(connection.getInputStream());
@@ -274,28 +169,28 @@ public class Bank implements ActionListener, WindowListener{
 						accountProps.setProperty("customerBalance", String.valueOf((currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()))));
 						System.out.println(String.valueOf((currBalance - (moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1].getAmount()))));
 						System.out.println("Money was removed from Customers Account");
-						status.append("\nMoney was removed from Customers Account");
+						BankInterface.status.append("\nMoney was removed from Customers Account");
 
 						// The bank signs one of the Ecash Objects
 						if ( signMoneyOrder(moneyOrderArrayFromCustomer[moneyOrderArrayFromCustomer.length-1])){
 							System.out.println("Signed one Ecash Object to send back to Customer");
-							status.append("\nSigned one Ecash Object to send back to Customer");
+							BankInterface.status.append("\nSigned one Ecash Object to send back to Customer");
 							// Bank hands the blinded money order back to Customer 
 							out = new ObjectOutputStream(connection.getOutputStream());
 							out.flush();
 							out.writeObject(signedObject);
 							out.flush();
 							System.out.println("Sent Signed Money Order back to Customer");
-							status.append("\nSent Signed Money Order back to Customer");
+							BankInterface.status.append("\nSent Signed Money Order back to Customer");
 						}
 						else{
 							System.out.println("Bank could not sign the Money Order");
-							status.append("\nBank could not sign the Money Order");							
+							BankInterface.status.append("\nBank could not sign the Money Order");							
 						}
 					}
 					else{
 						System.out.println("Customer does not have sufficient funds");
-						status.append("\nCustomer does not have sufficient funds");							
+						BankInterface.status.append("\nCustomer does not have sufficient funds");							
 					}
 				}
 			}
@@ -308,16 +203,6 @@ public class Bank implements ActionListener, WindowListener{
 			System.out.println("Error With Socket Connection");
 			ioException.printStackTrace();
 		}
-		
-		try {
-			in.close();
-			out.close();
-			connection.close();
-			providerSocket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	public static Boolean signMoneyOrder(Ecash ecashToSign){
@@ -382,7 +267,7 @@ public class Bank implements ActionListener, WindowListener{
 				// If there is a mismatch then set the matching boolean to false
 				if( moneyOrderArrayFromCustomer[i].getAmount() != moneyOrderAmount){
 					System.err.println("The amounts do not match for " + moneyOrderArrayFromCustomer[i].getAmount() + " and " + moneyOrderAmount);
-					status.append("\nThe amounts do not match for " + moneyOrderArrayFromCustomer[i].getAmount() + " and " + moneyOrderAmount);
+					BankInterface.status.append("\nThe amounts do not match for " + moneyOrderArrayFromCustomer[i].getAmount() + " and " + moneyOrderAmount);
 					matchingAmounts = false;
 				}
 				// If any two uniqueness string match set the matching unuqieness to true
@@ -394,7 +279,7 @@ public class Bank implements ActionListener, WindowListener{
 								matchingUniqueness = true;
 								tmpUniqueness = true;
 								System.err.println("The two Uniqueness Strings " + uniqueness[j].toString() + " are the same, you are cheating!");
-								status.append("\nThe two Uniqueness Strings " + uniqueness[j].toString() + " are the same, you are cheating!");
+								BankInterface.status.append("\nThe two Uniqueness Strings " + uniqueness[j].toString() + " are the same, you are cheating!");
 							}	
 						}
 					}
@@ -406,12 +291,12 @@ public class Bank implements ActionListener, WindowListener{
 		}
 		if ( matchingAmounts == true && matchingUniqueness == false ){
 			System.out.println("All amounts matched and All Uniqueness String are different!");
-			status.append("\nAll amounts matched and All Uniqueness String are different!");
+			BankInterface.status.append("\nAll amounts matched and All Uniqueness String are different!");
 			return true;
 		}
 		else{
 			System.err.println("The amounts did not match or Two Uniqueness String are the same, you are cheating!");
-			status.append("\nThe amounts did not match or Two Uniqueness String are the same, you are cheating!");
+			BankInterface.status.append("\nThe amounts did not match or Two Uniqueness String are the same, you are cheating!");
 			return false;
 		}	
 	}
@@ -436,42 +321,4 @@ public class Bank implements ActionListener, WindowListener{
             }
         }
     }
-	
-	@Override
-	public void windowOpened(WindowEvent e) {}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		// TODO Write out all files
-		System.out.println("windows closing");
-		try {
-			FileOutputStream out = new FileOutputStream("accountProperties");
-			accountProps.store(out, "---No Comment---");
-			out.close();
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-	}
-
-	@Override
-	public void windowClosed(WindowEvent e) {
-		System.out.println("windows closing2");
-	}
-
-	@Override
-	public void windowIconified(WindowEvent e) {}
-
-	@Override
-	public void windowDeiconified(WindowEvent e) {}
-
-	@Override
-	public void windowActivated(WindowEvent e) {}
-
-	@Override
-	public void windowDeactivated(WindowEvent e) {}
-
 }

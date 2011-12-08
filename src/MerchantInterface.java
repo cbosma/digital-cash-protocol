@@ -93,11 +93,11 @@ public class MerchantInterface extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		MerchantServer server = new MerchantServer();
 		//checks if the button clicked
 		if(e.getActionCommand().equals("open"))
 		{
 			// start server
+			MerchantServer server = new MerchantServer();
 			server.start();
 		}else if(e.getActionCommand().equals("close")) {
 			// stop server  
