@@ -52,11 +52,13 @@ public class Customer extends JPanel implements ActionListener{
 	private static SignedObject signedObject;
 
 
-	private Double transationAmount = null;
-	private int numMoneyOrders = 100;
-	private String testIdentity = "test";
+	private Double transactionAmount = null;
+	private static int numMoneyOrders = 100;
 	private Ecash[] moneyOrderArray = null;
-
+	private static String[][] LandRArray;
+	private static int Pflag = 0;
+	private static String P = "";
+	
 	// Constant Identity Information
 	private static final String name = "Alice";
 	private static final String address = "8000 York Road Towson Maryland 21252";
@@ -77,13 +79,16 @@ public class Customer extends JPanel implements ActionListener{
 
 	public static String commitment(String bit) {
 		String b = bit;
-		String P = "";
 
-		// Generate P, a random string of 1's and 0's with the same length as the bit to be committed
-		for (int i = 0; i < b.length(); i++) {
-			Random randomGenerator = new Random();
-			int randomInt = randomGenerator.nextInt(2);
-			P += randomInt;
+		if (Pflag == 0) {
+			// Generate P, a random string of 1's and 0's with the same length as the bit to be committed
+			for (int i = 0; i < b.length(); i++) {
+				Random randomGenerator = new Random();
+				int randomInt = randomGenerator.nextInt(2);
+				P += randomInt;
+			}
+			
+			Pflag = 1;
 		}
 
 		// Put P & b in a hash function to generate h
@@ -91,21 +96,23 @@ public class Customer extends JPanel implements ActionListener{
 	}
 
 	public static void splitIdentity() {
-		// Convert the message to 1's and 0's
-		String M = name + " " + address + " " + phone;
-		M = new BigInteger(M.getBytes()).toString(2);
-
-		// Generate the key, L
-		String L = generateKey(M);
-
-		// XOR M and L to get R
-		String R = "";
-		for (int i = 0; i < M.length() && i < L.length(); i++) {
-			R += M.charAt(i) ^ L.charAt(i);
+		for (int i = 0; i < numMoneyOrders; i++) {
+			// Convert the message to 1's and 0's
+			String M = name + " " + address + " " + phone;
+			M = new BigInteger(M.getBytes()).toString(2);
+	
+			// Generate the key, L
+			String L = generateKey(M);
+	
+			// XOR M and L to get R
+			String R = "";
+			for (int j = 0; j < M.length() && j < L.length(); j++) {
+				R += M.charAt(j) ^ L.charAt(j);
+			}
+			
+			LandRArray[i][1] = L;
+			LandRArray[i][2] = R;
 		}
-
-		System.out.println(commitment (L));
-		System.out.println(commitment (R));
 	}
 
 	/**
@@ -197,12 +204,18 @@ public class Customer extends JPanel implements ActionListener{
 
 			// If the amount TextField has data, try to make the connection
 			if ((amount.getText() != null && !amount.getText().isEmpty())){
-				transationAmount = Double.valueOf(amount.getText());
+				transactionAmount = Double.valueOf(amount.getText());
 
 				// Prepares 'n' anonymous money orders for a given amount
 				moneyOrderArray = new Ecash[numMoneyOrders];
-				for ( int i = 0; i < moneyOrderArray.length; i++ ){
-					moneyOrderArray[i] = new Ecash(transationAmount, testIdentity);
+				LandRArray = new String[numMoneyOrders][2];
+				
+				splitIdentity();
+				
+				for (int i = 0; i < moneyOrderArray.length; i++) {
+					for (int j = 0; j < LandRArray.length; j++) {
+						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][1]), commitment(LandRArray[j][2]));
+					}
 				}
 
 				ObjectOutputStream out = null;
@@ -256,14 +269,20 @@ public class Customer extends JPanel implements ActionListener{
 
 			// If the amount TextField has data, try to make the connection
 			if ((amount.getText() != null && !amount.getText().isEmpty())){
-				transationAmount = Double.valueOf(amount.getText());
+				transactionAmount = Double.valueOf(amount.getText());
 
 				// Prepares 'n' anonymous money orders for a given amount
 				moneyOrderArray = new Ecash[numMoneyOrders];
-				for ( int i = 0; i < moneyOrderArray.length; i++ ){
-					moneyOrderArray[i] = new Ecash(transationAmount, testIdentity);
+				LandRArray = new String[numMoneyOrders][2];
+				
+				for (int i = 0; i < moneyOrderArray.length; i++) {
+					for (int j = 0; j < LandRArray.length; j++) {
+						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][1]), commitment(LandRArray[j][2]));
+					}
 				}
-				moneyOrderArray[moneyOrderArray.length-3] = new Ecash(1.23, testIdentity);
+
+				// I don't know what think is
+				// moneyOrderArray[moneyOrderArray.length-3] = new Ecash(1.23, testIdentity);
 
 				ObjectOutputStream out = null;
 				ObjectInputStream in = null;
@@ -315,13 +334,18 @@ public class Customer extends JPanel implements ActionListener{
 
 			// If the amount TextField has data, try to make the connection
 			if ((amount.getText() != null && !amount.getText().isEmpty())){
-				transationAmount = Double.valueOf(amount.getText());
+				transactionAmount = Double.valueOf(amount.getText());
 
 				// Prepares 'n' anonymous money orders for a given amount
 				moneyOrderArray = new Ecash[numMoneyOrders];
-				for ( int i = 0; i < moneyOrderArray.length; i++ ){
-					moneyOrderArray[i] = new Ecash(transationAmount, testIdentity);
+				LandRArray = new String[numMoneyOrders][2];
+				
+				for (int i = 0; i < moneyOrderArray.length; i++) {
+					for (int j = 0; j < LandRArray.length; j++) {
+						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][1]), commitment(LandRArray[j][2]));
+					}
 				}
+				
 				moneyOrderArray[moneyOrderArray.length-3].setUniqueness(moneyOrderArray[moneyOrderArray.length-4].getUniqueness()); 
 
 				ObjectOutputStream out = null;
