@@ -69,6 +69,15 @@ public class Merchant extends JPanel implements ActionListener{
 			try{
 				EcashFromCustomer = (Ecash) in.readObject();
 				System.out.println("Received Ecash from the Customer");
+				//TODO - Merchant needs to verify the Banks signature
+//				Signature verificationEngine =
+//					     Signature.getInstance(algorithm, provider);
+//					 i f (so.verify(publickey, verificationEngine))
+//					     try {
+//					         Object myobj = so.getObject();
+//					     } catch (java.lang.ClassNotFoundException e) {};
+					 
+
 			}
 			catch(ClassNotFoundException classnot){
 				System.err.println("Data received in unknown format");
@@ -85,8 +94,6 @@ public class Merchant extends JPanel implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
