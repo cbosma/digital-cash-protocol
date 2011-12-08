@@ -152,7 +152,7 @@ public class Bank implements ActionListener, WindowListener{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.addWindowListener(this);
 
-		//frame.setMinimumSize(new Dimension(, this.getPreferredSize().height));
+		frame.setMinimumSize(new Dimension(500, frame.getPreferredSize().height));
 		frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
 				.getWidth() - frame.getSize().width) / 2), 200);
 
