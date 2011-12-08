@@ -10,7 +10,19 @@ import java.io.IOException;
 
 public class ReadWriteCsv {
 
-	public void readFile() {
+	private static String[] values;
+	
+	public static String[] getValues(){
+		values = null;
+		readFile();
+		return values;
+	}
+	
+	public static void saveValues(String value){
+		writeFile(value);
+	}
+	
+	public static void readFile() {
 
 		BufferedReader br = null;
 
@@ -22,12 +34,6 @@ public class ReadWriteCsv {
 			while ((line = br.readLine()) != null) {
 
 				String[] values = line.split(",");
-
-				//Do necessary work with the values, here we just print them out
-				for (String str : values) {
-					System.out.println(str);
-				}
-				System.out.println();
 			}
 		}
 		catch (FileNotFoundException ex) {
@@ -47,7 +53,7 @@ public class ReadWriteCsv {
 		}
 	}
 
-	public void writeFile(String uniquenessString){
+	public static void writeFile(String uniquenessString){
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter("depositedUniqueness.txt", true));
 			out.append(uniquenessString + ",");
@@ -55,10 +61,4 @@ public class ReadWriteCsv {
 		} catch (IOException e) {
 		}
 	}
-
-//	public static void main(String[] args) {
-//		ReadWriteCsv test = new ReadWriteCsv();
-//		test.readFile();
-//		test.writeFile("1234");
-//	}
 }
