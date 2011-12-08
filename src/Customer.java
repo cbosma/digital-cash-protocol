@@ -165,18 +165,19 @@ public class Customer extends JPanel implements ActionListener{
 
 		this.add(bankPane);
 		
+		JPanel merchantPane = new JPanel();
+		merchantPane.setLayout(new BoxLayout(merchantPane, BoxLayout.PAGE_AXIS));
+		merchantPane.setBorder(BorderFactory.createTitledBorder("Merchant Transactions"));
+		// TODO Add merchant stuff
+		merchantPane.add(new JLabel("Transactions with the merchant go here!!!"));
+		this.add(merchantPane);
+		
 		this.status = new JTextArea(5, 20);
 		JScrollPane scrollPane = new JScrollPane(this.status);
 		scrollPane.setSize(500, 100);
 		this.status.setEditable(false);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Status"));
 		this.frame.add(scrollPane);
-		
-		JPanel merchantPane = new JPanel();
-		merchantPane.setLayout(new BoxLayout(merchantPane, BoxLayout.PAGE_AXIS));
-		merchantPane.setBorder(BorderFactory.createTitledBorder("Customer Information"));
-		// TODO Add merchant stuff
-		this.add(merchantPane);
 		
 		// Display the window
 		this.frame.pack();
