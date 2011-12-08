@@ -103,11 +103,7 @@ public class Chooser extends JPanel implements ActionListener {
 			cust.createAndShowGUI();
 //			System.exit(0);
 		}else if (e.getActionCommand().equals("merchant")) {
-			Merchant merch = new Merchant();
-			this.setVisible(false);
-			frame.setVisible(false);
-			merch.createAndShowGUI();
-//			System.exit(0);
+			MerchantInterface merch = new MerchantInterface();
 		}else if (e.getActionCommand().equals("bank")) {
 			Bank bank = new Bank();
 			this.setVisible(false);
