@@ -47,10 +47,11 @@ public class Customer extends JPanel implements ActionListener{
 	private JButton submit = null;
 	private TextField amount = null;
 	private JButton sendToMerchant = null;
+	private JButton sendBadUniquenessToMerchant = null;
 	private TextField error = null;
 	private JTextArea status = new JTextArea();
 	private static SignedObject signedObject;
-
+	public static Boolean BadUniquenessToMerchant = false;
 
 	private Double transactionAmount = null;
 	private static int numMoneyOrders = 100;
@@ -58,7 +59,7 @@ public class Customer extends JPanel implements ActionListener{
 	private static String[][] LandRArray;
 	private static int Pflag = 0;
 	private static String P = "";
-	
+
 	// Constant Identity Information
 	private static final String name = "Alice";
 	private static final String address = "8000 York Road Towson Maryland 21252";
@@ -87,12 +88,12 @@ public class Customer extends JPanel implements ActionListener{
 				int randomInt = randomGenerator.nextInt(2);
 				P += randomInt;
 			}
-			
+
 			Pflag = 1;
 		}
 
-//		System.out.println("\n\n\nPrinting P: " + P.toString() + "\n\n\n");
-//		System.out.println("\n\n\nPrinting b: " + b.toString() + "\n\n\n");
+		//		System.out.println("\n\n\nPrinting P: " + P.toString() + "\n\n\n");
+		//		System.out.println("\n\n\nPrinting b: " + b.toString() + "\n\n\n");
 		// Put P & b in a hash function to generate h
 		return (P.hashCode() ^ b.hashCode()) + "";
 	}
@@ -102,16 +103,16 @@ public class Customer extends JPanel implements ActionListener{
 			// Convert the message to 1's and 0's
 			String M = name + " " + address + " " + phone;
 			M = new BigInteger(M.getBytes()).toString(2);
-	
+
 			// Generate the key, L
 			String L = generateKey(M);
-	
+
 			// XOR M and L to get R
 			String R = "";
 			for (int j = 0; j < M.length() && j < L.length(); j++) {
 				R += M.charAt(j) ^ L.charAt(j);
 			}
-			
+
 			LandRArray[i][0] = L;
 			LandRArray[i][1] = R;
 		}
@@ -185,7 +186,12 @@ public class Customer extends JPanel implements ActionListener{
 		this.sendToMerchant.addActionListener(this);
 		merchantPane.add(sendToMerchant);
 
-		merchantPane.add(new JLabel("Transactions with the merchant go here!!!"));
+		this.sendBadUniquenessToMerchant = new JButton("Send Bad Uniqueness Money Order to Merchant");
+		this.sendBadUniquenessToMerchant.addActionListener(this);
+		this.sendBadUniquenessToMerchant.setActionCommand("sendBadUniquenessToMerchant");
+		this.sendBadUniquenessToMerchant.setToolTipText("Already used Unuiqueness String");
+		this.sendBadUniquenessToMerchant.addActionListener(this);
+		merchantPane.add(sendBadUniquenessToMerchant);
 		this.add(merchantPane);
 
 		this.status = new JTextArea(5, 20);
@@ -211,14 +217,14 @@ public class Customer extends JPanel implements ActionListener{
 				// Prepares 'n' anonymous money orders for a given amount
 				moneyOrderArray = new Ecash[numMoneyOrders];
 				LandRArray = new String[numMoneyOrders][2];
-				
+
 				status.append("\nGenerating Identity Strings...");
 				splitIdentity();
-				
+
 				status.append("\nBit-Commitment in progress...");
 				for (int i = 0; i < moneyOrderArray.length; i++) {
 					for (int j = 0; j < LandRArray.length; j++) {
-//						System.out.println("MO: " + i + " | L/R: " + j );
+						//						System.out.println("MO: " + i + " | L/R: " + j );
 						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][0]), commitment(LandRArray[j][1]));
 					}
 				}
@@ -255,7 +261,7 @@ public class Customer extends JPanel implements ActionListener{
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
+
 				try {
 					in.close();
 					out.close();
@@ -264,7 +270,7 @@ public class Customer extends JPanel implements ActionListener{
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				
+
 			} //end if text field is not empty
 			else{
 				status.append("No Amount Entered for Money Order");		
@@ -280,10 +286,10 @@ public class Customer extends JPanel implements ActionListener{
 				// Prepares 'n' anonymous money orders for a given amount
 				moneyOrderArray = new Ecash[numMoneyOrders];
 				LandRArray = new String[numMoneyOrders][2];
-				
+
 				for (int i = 0; i < moneyOrderArray.length; i++) {
 					for (int j = 0; j < LandRArray.length; j++) {
-//						System.out.println("MO: " + i + " | L/R: " + j );
+						//						System.out.println("MO: " + i + " | L/R: " + j );
 						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][0]), commitment(LandRArray[j][1]));
 					}
 				}
@@ -346,13 +352,13 @@ public class Customer extends JPanel implements ActionListener{
 				// Prepares 'n' anonymous money orders for a given amount
 				moneyOrderArray = new Ecash[numMoneyOrders];
 				LandRArray = new String[numMoneyOrders][2];
-				
+
 				for (int i = 0; i < moneyOrderArray.length; i++) {
 					for (int j = 0; j < LandRArray.length; j++) {
 						moneyOrderArray[i] = new Ecash(transactionAmount, commitment(LandRArray[j][0]), commitment(LandRArray[j][1]));
 					}
 				}
-				
+
 				moneyOrderArray[moneyOrderArray.length-3].setUniqueness(moneyOrderArray[moneyOrderArray.length-4].getUniqueness()); 
 
 				ObjectOutputStream out = null;
@@ -427,7 +433,35 @@ public class Customer extends JPanel implements ActionListener{
 			catch(IOException ioException){
 				ioException.printStackTrace();
 			} //end if text field is not empty
-			
+
+		} // end if
+		if(e.getActionCommand().equals("sendBadUniquenessToMerchant")) {
+			BadUniquenessToMerchant = true;
+			ObjectOutputStream out = null;
+			ObjectInputStream in = null;
+			Socket requestSocket = null;
+			try{
+				//1. creating a socket to connect to the server
+				requestSocket = new Socket("localhost", 2005);
+				System.out.println("Connected to localhost in port 2005");
+				//2. get Input and Output streams
+				out = new ObjectOutputStream(requestSocket.getOutputStream());
+				out.flush();
+				// Send the money order array to the bank
+				out.writeObject(signedObject);
+				out.flush();
+				System.out.println("Money Order Sent to the Merchant...");
+				status.append("\nMoney Order Sent to the Merchant...");
+				out.close();
+				requestSocket.close();
+			}
+			catch(UnknownHostException unknownHost){
+				status.append("Unknown Host");
+			}
+			catch(IOException ioException){
+				ioException.printStackTrace();
+			} //end if text field is not empty
+
 		} // end if
 	}
 } // end method
