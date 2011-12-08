@@ -27,6 +27,7 @@ import java.security.SignedObject;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -53,6 +54,7 @@ public class BankInterface extends JFrame implements ActionListener, WindowListe
 
 	static JTextArea status = new JTextArea();
 	private JButton startSockets;
+	private BankServer server;
 
 	/**
 	 * Randomly Generated Serial Version UID
@@ -87,16 +89,32 @@ public class BankInterface extends JFrame implements ActionListener, WindowListe
 		startSockets.addActionListener(this);
 		contentPane.add(startSockets);
 
-		TextField accountNum = new TextField();
+		JPanel accountPane = new JPanel();
+		accountPane.setLayout(new BoxLayout(accountPane, BoxLayout.LINE_AXIS));
+		accountPane.setBorder(BorderFactory.createTitledBorder("Account Information"));
+		contentPane.add(accountPane);
+		
+		JPanel customerPane = new JPanel();
+		customerPane.setLayout(new BoxLayout(customerPane, BoxLayout.PAGE_AXIS));
+		customerPane.setBorder(BorderFactory.createTitledBorder("Customer Account"));
+		JLabel accountNum = new JLabel();
 		accountNum.setText("Account Number:" + BankServer.accountProps.getProperty("accountNum"));
-		accountNum.setEditable(false);
-		
-		TextField customerBalance = new TextField();
+		JLabel customerBalance = new JLabel();
 		customerBalance.setText("Account Balance:" + BankServer.accountProps.getProperty("customerBalance"));
-		customerBalance.setEditable(false);
+		customerPane.add(accountNum);
+		customerPane.add(customerBalance);
+		accountPane.add(customerPane);
 		
-		contentPane.add(accountNum);
-		contentPane.add(customerBalance);
+		JPanel merchantPane = new JPanel();
+		merchantPane.setLayout(new BoxLayout(merchantPane, BoxLayout.PAGE_AXIS));
+		merchantPane.setBorder(BorderFactory.createTitledBorder("Merchant Account"));
+		JLabel merchAccountNum = new JLabel();
+		merchAccountNum.setText("Account Number:" + BankServer.accountProps.getProperty("merchAccountNum"));
+		JLabel merchantBalance = new JLabel();
+		merchantBalance.setText("Account Balance:" + BankServer.accountProps.getProperty("merchantBalance"));
+		merchantPane.add(merchAccountNum);
+		merchantPane.add(merchantBalance);
+		accountPane.add(merchantPane);
 		
 		status = new JTextArea(5, 20);
 		JScrollPane scrollPane = new JScrollPane(status);
@@ -109,11 +127,8 @@ public class BankInterface extends JFrame implements ActionListener, WindowListe
 		layout.putConstraint(SpringLayout.NORTH, title, 0, SpringLayout.NORTH, contentPane);
 		layout.putConstraint(SpringLayout.WEST, title, 0, SpringLayout.WEST, contentPane);
 		layout.putConstraint(SpringLayout.WEST, startSockets, 5, SpringLayout.EAST, title);
-		layout.putConstraint(SpringLayout.NORTH, accountNum, 10, SpringLayout.SOUTH, title);
-		layout.putConstraint(SpringLayout.NORTH, customerBalance, 0, SpringLayout.SOUTH, accountNum);
-		// bind the bottom of the scrollpane to the bottom of the content pane
-		layout.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.SOUTH, customerBalance);
-		// bind the bottom right of the content pane to the bottom right of the status window
+		layout.putConstraint(SpringLayout.NORTH, accountPane, 10, SpringLayout.SOUTH, title);
+		layout.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.SOUTH, accountPane);
 		layout.putConstraint(SpringLayout.EAST, contentPane, 0, SpringLayout.EAST, scrollPane);
 		layout.putConstraint(SpringLayout.SOUTH, contentPane, 0, SpringLayout.SOUTH, scrollPane);
 
@@ -147,8 +162,9 @@ public class BankInterface extends JFrame implements ActionListener, WindowListe
 			status.append("\nOpening the bank");
 			startSockets.setText("Close the Bank"); 
 			startSockets.setActionCommand("closeBank");
-			BankServer server = new BankServer();
+			server = new BankServer();
 			server.start();
+			this.repaint();
 		} else if (e.getActionCommand().equals("closeBank")) {
 			status.append("Closing the bank");
 			startSockets.setText("Close the Bank");
