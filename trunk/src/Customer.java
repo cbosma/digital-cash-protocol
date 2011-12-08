@@ -17,6 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -126,6 +127,14 @@ public class Customer extends JPanel implements ActionListener{
 		this.frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
 				.getWidth() - this.frame.getSize().width) / 2), 200);
 
+		JPanel customerPane = new JPanel();
+		customerPane.setLayout(new BoxLayout(customerPane, BoxLayout.PAGE_AXIS));
+		customerPane.setBorder(BorderFactory.createTitledBorder("Customer Information"));
+		customerPane.add(new JLabel("Name: " + Customer.name));
+		customerPane.add(new JLabel("Address: " + Customer.address));
+		customerPane.add(new JLabel("Phone: " + Customer.phone));
+		this.add(customerPane);
+		
 		JPanel transactionPane = new JPanel();
 		transactionPane.setLayout(new BoxLayout(transactionPane, BoxLayout.PAGE_AXIS));
 		transactionPane.setBorder(BorderFactory.createTitledBorder("New Bank Transaction"));
