@@ -32,7 +32,6 @@ import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
 
 /**
  * ===== Requirements =====
@@ -67,15 +66,6 @@ public class Bank extends JPanel implements ActionListener{
 	 */
 	private static final long serialVersionUID = 8465685567853888181L;
 
-	/**
-	 * Constructor
-	 */
-	public Bank() {
-		super();
-		status.append("Reading properties file...");
-		this.readProperties();
-		status.append("Initialized");
-	}
 
 	/**
 	 * Open the properties file, generate a default if it doesn't exist.
@@ -211,17 +201,17 @@ public class Bank extends JPanel implements ActionListener{
 				// Turn off bold fonts
 				UIManager.put("swing.boldMetal", Boolean.FALSE);
 				readProperties();
-				createAndShowGUI();
 				setupSockets();
+				createAndShowGUI();
 
 			}
 		});
-		//		SwingUtilities.invokeLater(new Runnable() {
-		//			@Override
-		//			public void run() {
-		//				setupSockets();
-		//			}
-		//		});
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				setupSockets();
+//			}
+//		});
 	}
 
 	@Override
