@@ -133,7 +133,7 @@ public class Customer extends JPanel implements ActionListener{
 		this.frame.setContentPane(this);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		this.frame.setMinimumSize(new Dimension(250, this.frame.getPreferredSize().height));
+		this.frame.setMinimumSize(new Dimension(250, this.frame.getPreferredSize().height + 500));
 		this.frame.setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
 				.getWidth()/2) - (this.frame.getSize().width*2)), 200);
 
@@ -149,7 +149,8 @@ public class Customer extends JPanel implements ActionListener{
 		bankPane.setLayout(new BoxLayout(bankPane, BoxLayout.PAGE_AXIS));
 		bankPane.setBorder(BorderFactory.createTitledBorder("New Bank Transaction"));
 		amount = new TextField();
-		amount.setText("Money Order Amount:");
+		amount.setMaximumSize(new Dimension(300,20));
+		amount.setText("Enter Amount");
 		bankPane.add(amount);
 
 		this.submit = new JButton("Submit Money Order");
