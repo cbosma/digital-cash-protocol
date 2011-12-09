@@ -212,7 +212,7 @@ public class BankServer extends Thread{
 										String[][] loadedArray = loadArray(EcashFromMerchant.getUniqueness());
 										if (loadedArray.equals(idenityResultsFromMerchant) == true){
 											System.out.println("Merchant Cheated");
-											BankInterface.status.append("\nMerchant Cheated");
+											BankInterface.status.append("\nMerchant Cheated, identity strings match");
 										}
 										else{
 											System.out.println("Customer Cheated");
