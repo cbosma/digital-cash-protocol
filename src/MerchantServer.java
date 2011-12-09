@@ -52,7 +52,10 @@ public class MerchantServer extends Thread {
 	 */
 	@Override
 	public void run() {
-		setupSockets();
+		while(true){
+			setupSockets();	
+		}
+		
 	}
 
 	/**

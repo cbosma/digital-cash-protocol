@@ -59,7 +59,9 @@ public class BankServer extends Thread{
 		BankInterface.customerBalance.setText("Account Balance: $" + BankServer.accountProps.getProperty("customerBalance"));
 		BankInterface.merchAccountNum.setText("Account Number: " + BankServer.accountProps.getProperty("merchAccountNum"));
 		BankInterface.merchantBalance.setText("Account Balance: $" + BankServer.accountProps.getProperty("merchantBalance"));
-		setupSockets();
+		while(true){
+			setupSockets();
+		}
 	}
 
 	/**
@@ -189,11 +191,11 @@ public class BankServer extends Thread{
 							//3. Get Input Stream
 							in = new ObjectInputStream(connection.getInputStream());
 							//4. The two parts communicate via the input and output streams
-							
+
 							String[][] idenityResultsFromMerchant = (String[][]) in.readObject();
 							System.out.println("Identity Results received from the Merchant");
 							BankInterface.status.append("\nIdentity Results received from the Merchant");
-							
+
 							signedObject = (SignedObject) in.readObject();
 							PublicKey publicKey;
 							try {
@@ -206,6 +208,7 @@ public class BankServer extends Thread{
 									saveArray(EcashFromMerchant.getUniqueness(), idenityResultsFromMerchant);
 
 									if ( Customer.BadUniquenessToMerchant == true){
+										Customer.BadUniquenessToMerchant = false;
 										EcashFromMerchant.setUniqueness("cbc6e180-995f-4213-a999-14a3dcf42849");
 										System.out.println("You have already used this Uniqueness ID, you are cheating!");
 										BankInterface.status.append("\nYou have already used this Uniqueness ID, you are cheating!");
@@ -218,7 +221,7 @@ public class BankServer extends Thread{
 											System.out.println("Customer Cheated");
 											BankInterface.status.append("\n Customer Cheated, identity strings are different");
 										}
-										
+
 
 									}
 									else{
@@ -247,7 +250,8 @@ public class BankServer extends Thread{
 											ReadWriteCsv.writeFile(EcashFromMerchant.getUniqueness());
 											System.out.println("The Uniqueness ID is good!");
 											BankInterface.status.append("\nThe Uniqueness ID is good!");
-											accountProps.setProperty("merchantBalance", String.valueOf((currBalance + (EcashFromMerchant.getAmount()))));
+											Double merchantBalance = Double.valueOf(BankServer.accountProps.getProperty("merchantBalance"));
+											accountProps.setProperty("merchantBalance", String.valueOf((merchantBalance + (EcashFromMerchant.getAmount()))));
 											BankInterface.merchantBalance.setText("Account Balance: $" + BankServer.accountProps.getProperty("merchantBalance"));
 											System.out.println("The money order has been deposited into the merchants account.");
 											BankInterface.status.append("\nThe money order has been deposited into the merchants account.");
@@ -424,35 +428,35 @@ public class BankServer extends Thread{
 		return object;
 	}
 
-	  public void saveArray(String filename, String[][] output_veld) {
-		     try {
-		        FileOutputStream fos = new FileOutputStream(filename);
-		        GZIPOutputStream gzos = new GZIPOutputStream(fos);
-		        ObjectOutputStream out = new ObjectOutputStream(gzos);
-		        out.writeObject(output_veld);
-		        out.flush();
-		        out.close();
-		     }
-		     catch (IOException e) {
-		         System.out.println(e); 
-		     }
-		  }
+	public void saveArray(String filename, String[][] output_veld) {
+		try {
+			FileOutputStream fos = new FileOutputStream(filename);
+			GZIPOutputStream gzos = new GZIPOutputStream(fos);
+			ObjectOutputStream out = new ObjectOutputStream(gzos);
+			out.writeObject(output_veld);
+			out.flush();
+			out.close();
+		}
+		catch (IOException e) {
+			System.out.println(e); 
+		}
+	}
 
-		  public String[][] loadArray(String filename) {
-		      try {
-		        FileInputStream fis = new FileInputStream(filename);
-		        GZIPInputStream gzis = new GZIPInputStream(fis);
-		        ObjectInputStream in = new ObjectInputStream(gzis);
-		        String[][] gelezen_veld = (String[][])in.readObject();
-		        in.close();
-		        return gelezen_veld;
-		      }
-		      catch (Exception e) {
-		          System.out.println(e);
-		      }
-		      return null;
-		  }
-	
-	
-	
+	public String[][] loadArray(String filename) {
+		try {
+			FileInputStream fis = new FileInputStream(filename);
+			GZIPInputStream gzis = new GZIPInputStream(fis);
+			ObjectInputStream in = new ObjectInputStream(gzis);
+			String[][] gelezen_veld = (String[][])in.readObject();
+			in.close();
+			return gelezen_veld;
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+
+
+
 }
