@@ -439,14 +439,14 @@ public class Customer extends JPanel implements ActionListener{
 						bitSelectorResults[i][1] = ""; 
 					}
 				}
-				
+
 				out.flush();
 				// Send the money order array to the bank
 				out.writeObject(bitSelectorResults);
 				out.flush();
 				System.out.println("Sent Bit Vector Results to Merchant...");
 				status.append("\nSent Bit Vector Results to Merchant...");
-				
+
 				in.close();
 				out.close();
 				requestSocket.close();
@@ -465,6 +465,7 @@ public class Customer extends JPanel implements ActionListener{
 		} // end if
 		if(e.getActionCommand().equals("sendBadUniquenessToMerchant")) {
 			BadUniquenessToMerchant = true;
+
 			ObjectOutputStream out = null;
 			ObjectInputStream in = null;
 			Socket requestSocket = null;
@@ -480,6 +481,31 @@ public class Customer extends JPanel implements ActionListener{
 				out.flush();
 				System.out.println("Money Order Sent to the Merchant...");
 				status.append("\nMoney Order Sent to the Merchant...");
+
+				in = new ObjectInputStream(requestSocket.getInputStream());
+				String bitVectorFromMerchant = (String) in.readObject();
+				System.out.println("Received Bit Vector from Merchant...");
+				status.append("\nReceived Bit Vector from Merchant...");
+
+				String[][] bitSelectorResults = LandRArray.clone();
+				for (int i = 0; i < bitVectorFromMerchant.length(); i++) {
+					if (bitVectorFromMerchant.charAt(i) == '0') {
+						bitSelectorResults[i][0] = ""; 
+					}
+
+					else if (bitVectorFromMerchant.charAt(i) == '1') {
+						bitSelectorResults[i][1] = ""; 
+					}
+				}
+
+				out.flush();
+				// Send the money order array to the bank
+				out.writeObject(bitSelectorResults);
+				out.flush();
+				System.out.println("Sent Bit Vector Results to Merchant...");
+				status.append("\nSent Bit Vector Results to Merchant...");
+
+				in.close();
 				out.close();
 				requestSocket.close();
 			}
@@ -489,8 +515,11 @@ public class Customer extends JPanel implements ActionListener{
 			catch(IOException ioException){
 				ioException.printStackTrace();
 			} //end if text field is not empty
+			catch (ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+	} // end method
 
-		} // end if
-	}
-} // end method
-
+}
