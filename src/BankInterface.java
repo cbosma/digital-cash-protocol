@@ -161,8 +161,21 @@ public class BankInterface extends JFrame implements ActionListener, WindowListe
 			server.start();
 			this.repaint();
 		} else if (e.getActionCommand().equals("closeBank")) {
+		
 			status.append("Closing the bank");
 			startSockets.setText("Close the Bank");
+			System.out.println("windows closing");
+			try {
+				FileOutputStream out = new FileOutputStream("accountProperties");
+				BankServer.accountProps.store(out, "---No Comment---");
+				out.close();
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			System.exit(0);
 		}
 		
