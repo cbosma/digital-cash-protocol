@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignedObject;
+import java.util.BitSet;
 import java.util.Random;
 
 /**
@@ -34,11 +35,11 @@ public class MerchantServer extends Thread {
        
         for (int i = 0; i < bitVector.length(); i++) {
             if (bitVector.charAt(i) == '0') {
-                System.out.println("Reveal Right " + i);   
+//                System.out.println("Reveal Right " + i);   
             }
            
             else if (bitVector.charAt(i) == '1') {
-                System.out.println("Reveal Left " + i);
+//                System.out.println("Reveal Left " + i);
             }
         }
         
@@ -87,10 +88,28 @@ public class MerchantServer extends Thread {
 						EcashFromCustomer = (Ecash) signedObject.getObject();
 						System.out.println("The Ecash received from the customer is good for $" + EcashFromCustomer.getAmount());
 						MerchantInterface.status.append("\nThe Ecash received from the customer is good for $" + EcashFromCustomer.getAmount());
+						out = new ObjectOutputStream(connection.getOutputStream());
+						out.flush();
+						// Send the signed money order to the bank
+						out.writeObject(generateBitVector());
+						out.flush();
+						System.out.println("Bit Vector sent to Merchant...");
+						MerchantInterface.status.append("\nBit Vector sent to Customer...");
 						
+						String[][] identityResultsFromCustomer = (String[][]) in.readObject();
+						System.out.println("Identity Results Received from Customer...");
+						MerchantInterface.status.append("\nIdentity Results Received from Customer...");
+						
+						in.close();
+						out.close();
+						connection.close();
+						providerSocket.close();
+										
 						ObjectOutputStream bankOut = null;
 						ObjectInputStream bankIn = null;
 						Socket BankrequestSocket = null;
+						
+						
 						try{
 							//1. creating a socket to connect to the bank
 							BankrequestSocket = new Socket("localhost", 2006);
