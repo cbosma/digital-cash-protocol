@@ -103,12 +103,16 @@ public class MerchantInterface extends JFrame implements ActionListener{
 		//checks if the button clicked
 		if(e.getActionCommand().equals("open"))
 		{
+			startSockets.setText("Close the Store");
+			startSockets.setActionCommand("close");
 			// start server
 			MerchantServer server = new MerchantServer();
 			server.start();
 		}else if(e.getActionCommand().equals("close")) {
+			
 			// stop server  
 //        	server.stopserver();
+			System.exit(0);
 		}
 	}
 }
