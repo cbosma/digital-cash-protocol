@@ -54,9 +54,9 @@ public class MerchantInterface extends JFrame implements ActionListener{
 		super("Merchant");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		setMinimumSize(new Dimension(500, getPreferredSize().height));
+		setMinimumSize(new Dimension(500, (getPreferredSize().height) + 300));
 		setLocation((((int) Toolkit.getDefaultToolkit().getScreenSize()
-				.getWidth()) / 2), 400);
+				.getWidth()) / 2), 440);
 
 		JPanel panel = (JPanel) this.getContentPane();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
