@@ -16,7 +16,10 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.SignedObject;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.swing.JPanel;
 
@@ -200,11 +203,22 @@ public class BankServer extends Thread{
 									System.out.println("Bank has checked, and the Banks Signature is good");
 									BankInterface.status.append("\nBank has checked, and the Banks Signature is good");
 									EcashFromMerchant = (Ecash) signedObject.getObject();
+									saveArray(EcashFromMerchant.getUniqueness(), idenityResultsFromMerchant);
 
 									if ( Customer.BadUniquenessToMerchant == true){
 										EcashFromMerchant.setUniqueness("cbc6e180-995f-4213-a999-14a3dcf42849");
 										System.out.println("You have already used this Uniqueness ID, you are cheating!");
 										BankInterface.status.append("\nYou have already used this Uniqueness ID, you are cheating!");
+										String[][] loadedArray = loadArray(EcashFromMerchant.getUniqueness());
+										if (loadedArray.equals(idenityResultsFromMerchant) == true){
+											System.out.println("Merchant Cheated");
+											BankInterface.status.append("\nMerchant Cheated");
+										}
+										else{
+											System.out.println("Customer Cheated");
+											BankInterface.status.append("\n Customer Cheated, identity strings are different");
+										}
+										
 
 									}
 									else{
@@ -410,4 +424,35 @@ public class BankServer extends Thread{
 		return object;
 	}
 
+	  public void saveArray(String filename, String[][] output_veld) {
+		     try {
+		        FileOutputStream fos = new FileOutputStream(filename);
+		        GZIPOutputStream gzos = new GZIPOutputStream(fos);
+		        ObjectOutputStream out = new ObjectOutputStream(gzos);
+		        out.writeObject(output_veld);
+		        out.flush();
+		        out.close();
+		     }
+		     catch (IOException e) {
+		         System.out.println(e); 
+		     }
+		  }
+
+		  public String[][] loadArray(String filename) {
+		      try {
+		        FileInputStream fis = new FileInputStream(filename);
+		        GZIPInputStream gzis = new GZIPInputStream(fis);
+		        ObjectInputStream in = new ObjectInputStream(gzis);
+		        String[][] gelezen_veld = (String[][])in.readObject();
+		        in.close();
+		        return gelezen_veld;
+		      }
+		      catch (Exception e) {
+		          System.out.println(e);
+		      }
+		      return null;
+		  }
+	
+	
+	
 }
