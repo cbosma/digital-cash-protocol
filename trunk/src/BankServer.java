@@ -186,6 +186,11 @@ public class BankServer extends Thread{
 							//3. Get Input Stream
 							in = new ObjectInputStream(connection.getInputStream());
 							//4. The two parts communicate via the input and output streams
+							
+							String[][] idenityResultsFromMerchant = (String[][]) in.readObject();
+							System.out.println("Identity Results received from the Merchant");
+							BankInterface.status.append("\nIdentity Results received from the Merchant");
+							
 							signedObject = (SignedObject) in.readObject();
 							PublicKey publicKey;
 							try {
