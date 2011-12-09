@@ -21,6 +21,7 @@ import java.util.Random;
 public class MerchantServer extends Thread {
 	private Ecash EcashFromCustomer = null;
 	private static SignedObject signedObject;
+	private static String[][] identityResultsFromCustomer = null;
 	
 	public static String generateBitVector() {
         String bitVector = "";
@@ -96,7 +97,7 @@ public class MerchantServer extends Thread {
 						System.out.println("Bit Vector sent to Merchant...");
 						MerchantInterface.status.append("\nBit Vector sent to Customer...");
 						
-						String[][] identityResultsFromCustomer = (String[][]) in.readObject();
+						identityResultsFromCustomer = (String[][]) in.readObject();
 						System.out.println("Identity Results Received from Customer...");
 						MerchantInterface.status.append("\nIdentity Results Received from Customer...");
 						
@@ -118,7 +119,11 @@ public class MerchantServer extends Thread {
 							//2. get Input and Output streams
 							bankOut = new ObjectOutputStream(BankrequestSocket.getOutputStream());
 							bankOut.flush();
-							// Send the signed money order to the bank
+							// Send the identity results and signed money order to the bank
+							bankOut.writeObject(identityResultsFromCustomer);
+							bankOut.flush();
+							System.out.println("Identity Results sent to Bank...");
+							MerchantInterface.status.append("\nIdentity Results sent to Bank...");
 							bankOut.writeObject(signedObject);
 							bankOut.flush();
 							System.out.println("Signed Money Order was sent to Bank for Verification...");
