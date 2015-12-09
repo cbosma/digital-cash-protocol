@@ -1,0 +1,1 @@
+Digital Cash Protocol Project for COSC 645 Semester Project Fall 2011.
